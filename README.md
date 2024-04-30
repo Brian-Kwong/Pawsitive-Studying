@@ -1,7 +1,7 @@
 # Pawsitive-Studying-D
 
 ## Pitch
-We will make sure you are **pawsitively productive*** while studying so you can ***cativate*** your way to success
+We will make sure you are ***pawsitively productive*** while studying so you can ***cativate*** your way to success
 
 Study Buddy is a companion app that allows you to focus on studying when you're under a lot of stress or if you have trouble focusing. It's designed to enhance your focus and productivity which will help you study for classes.
 
