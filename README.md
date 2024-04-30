@@ -1,4 +1,4 @@
-# Pawsitive-Studying-D
+# Pawsitive-Studying /ᐠ - ˕ -マ Ⳋ
 
 ## Pitch
 We will make sure you are ***pawsitively productive*** while studying so you can ***cativate*** your way to success
