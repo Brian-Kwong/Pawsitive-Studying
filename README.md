@@ -11,3 +11,6 @@ For students who need effective study habits, StudyBuddy is a study management a
 
 ## Lofi Music Sources
 <a>https://pixabay.com/music/search/lofi/</a>
+
+## Prototype
+https://www.figma.com/file/kfvBoWzSjIklABaIzf1QbJ/StudyBuddy?type=design&node-id=1%3A40&mode=dev&t=m9tIXMnVUoiSo60m-1
