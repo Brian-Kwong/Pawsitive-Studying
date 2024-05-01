@@ -19,6 +19,6 @@
   "author": "Juan Zavala, Jenna Chan, Aurora Zhang, Brian Kwong, Brent Nakashima",
   "license": "ISC",
   "workspaces": [
-    "packages/*"
+    "Application/*"
   ]
 }
