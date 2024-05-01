@@ -34,7 +34,7 @@ If you're using a Mac you'll also need to install watchman `brew install watchma
 
 [^1]: This assumes you have homebrew (the package manager for macOS) installed. If you dont have it installed you can get it [here](https://brew.sh/)
 
-Additionally we will need to get a ExpoGo-- an that allows us to wirelessly transmit our web application to our mobile device.
+Additionally we will need to get a ExpoGo-- an app that allows us to wirelessly transmit our web application to our mobile device.
 
 [iOS📱](https://apps.apple.com/us/app/expo-go/id982107779)
 [Andriod ☎️](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US&gl=US&pli=1)
