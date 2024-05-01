@@ -31,6 +31,7 @@ Run `npm install` which downloads all the neccessary node packages
 This application's front end was built upon the React Native framework so we will need to install a couple more things...
 
 If you're using a Mac you'll also need to install watchman `brew install watchman`[^1]
+
 Afterwards we will need to allow Watchman to have permission on your computer:
 
 1. Open the `Privacy & Security` section of system settings and then click `Full Disk Access`
