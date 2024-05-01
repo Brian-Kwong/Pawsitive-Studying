@@ -1,0 +1,24 @@
+{
+  "name": "pawsitive-studying-",
+  "version": "1.0.0",
+  "description": "The purrfect way to make sure you are pawsitively productive while studying so you can cativate your way to success",
+  "main": "y",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Brian-Kwong/Pawsitive-Studying-/issues/1"
+  },
+  "keywords": [
+    "Studying",
+    "React-Native",
+    "MongoDB",
+    "Express"
+  ],
+  "author": "Juan Zavala, Jenna Chan, Aurora Zhang, Brian Kwong, Brent Nakashima",
+  "license": "ISC",
+  "workspaces": [
+    "packages/*"
+  ]
+}
