@@ -31,6 +31,14 @@ Run `npm install` which downloads all the neccessary node packages
 This application's front end was built upon the React Native framework so we will need to install a couple more things...
 
 If you're using a Mac you'll also need to install watchman `brew install watchman`[^1]
+Afterwards we will need to allow Watchman to have permission on your computer:
+
+1. Open the `Privacy & Security` section of system settings and then click `Full Disk Access`
+2. Click the plus icon to add a new application
+3. Press (SHIFT+COMMAND+G) then type in the following path `/opt/homebrew/Cellar/watchman/`
+4. Open the folder with your version number for example : `2024.04.22.00_1` followed by entering the bin folder
+5. Select `watchman`
+6. Restart your terminal or run `exec zsh`
 
 [^1]: This assumes you have homebrew (the package manager for macOS) installed. If you dont have it installed you can get it [here](https://brew.sh/)
 
@@ -39,11 +47,13 @@ Additionally we will need to get a ExpoGo-- an app that allows us to wirelessly 
 [iOS📱](https://apps.apple.com/us/app/expo-go/id982107779)
 [Andriod ☎️](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US&gl=US&pli=1)
 
-Then to start the application navigate to `./Application/Pawsitive-Studying` & run `npx expo start`
+Then to start the application navigate to `./Application/Pawsitive-Studying` & run `npx expo start`[^2]
+
+[^2]: **_IMPORTANT_** If you are using Eduroam or any public network, run ` npx expo start --tunnel`. This creates a private tunnel between your computer and device to bypass any firewall restrictions
 
 Make sure your mobile phone and computer are connected on the same LAN, then scan the QR code.
 
 Accept any permission prompts that may arise from either the computer or device.
 
-If all goes well it should open up in ExpoGo and load your app[^2].
-[^2]On first boot it may take a bit to download the code onto the device
+If all goes well it should open up in ExpoGo and load your app[^3].
+[^3]: On first boot it may take a bit to download the code onto the device
