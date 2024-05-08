@@ -1,19 +1,19 @@
 {
-  "extends": "@react-native-community",
-  "parserOptions": {
-    "parser": "@babel/eslint-parser",
-    "requireConfigFile": false,
-    "ecmaFeatures": {
-      /* Type and JavaScript ok */
-      "jsx": true,
-      "tsx": true,
+    "extends": "@react-native-community",
+    "parserOptions": {
+        "parser": "@babel/eslint-parser",
+        "requireConfigFile": false,
+        "ecmaFeatures": {
+            /* Type and JavaScript ok */
+            "jsx": true,
+            "tsx": true,
+        },
     },
-  },
-  "rules": {
-    /* Nor needed for React v17 or above */
-    "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off",
-    "no-alert": "off", // Alerts help tell user they did something wrong
-    "quotes": ["error", "double"] /* Double quotes are easier to read */,
-  },
+    "rules": {
+        /* Nor needed for React v17 or above */
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
+        "no-alert": "off", // Alerts help tell user they did something wrong
+        "quotes": ["error", "double"] /* Double quotes are easier to read */,
+    },
 }

@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { styles } from "../../Styles/comp_styles.js";
+import { styles } from "../../Styles/comp_styles.jsx";
 
 const tabBarIconColor = "blue";
 const inactiveTabIconColor = "black";
