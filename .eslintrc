@@ -15,5 +15,6 @@
         "react/react-in-jsx-scope": "off",
         "no-alert": "off", // Alerts help tell user they did something wrong
         "quotes": ["error", "double"] /* Double quotes are easier to read */,
+        "prettier/prettier": 0 /* Let everything be handled by Prettier */,
     },
 }
