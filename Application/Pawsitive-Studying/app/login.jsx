@@ -1,7 +1,6 @@
-import { Button, StyleSheet, Text, View, TextInput, Alert } from "react-native";
+import { Button, Text, View, TextInput } from "react-native";
 import { styles } from "../Styles/comp_styles.js";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
 
 export default function Welcome() {
   return (
