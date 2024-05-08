@@ -20,5 +20,8 @@
   "license": "ISC",
   "workspaces": [
     "Application/*"
-  ]
+  ],
+  "devDependencies": {
+    "@microsoft/eslint-formatter-sarif": "^3.1.0"
+  }
 }
