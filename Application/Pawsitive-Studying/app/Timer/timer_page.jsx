@@ -1,33 +1,39 @@
-import { Button, TextInput, View } from 'react-native'
+import { Button, TextInput, View, Text } from 'react-native'
 import { styles } from '../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
+import { useEffect, useState } from 'react'
 
 export default function TimerPage() {
-    const startTimer = (time = 1) => {
-        const timer = setInterval(() => {
-            time -= 1
+    const [time, timer] = useState(0)
+    const [timerOn, setTimerOn] = useState(false)
+
+    /* Timer function */
+    useEffect(() => {
+        if (timerOn) {
+            const one_sec_timer = setInterval(() => {
+                timer(time - 1)
+            }, 1000)
             if (time <= 0) {
-                clearInterval(timer)
-                alert('Time is up!')
+                setTimerOn(false)
             }
-        }, 1000)
-    }
-    var time = 0
+            return () => clearInterval(one_sec_timer)
+        }
+    }, [time, timerOn])
+
     return (
         <View style={styles.container}>
+            <Text style={styles.textHeader}>{time} seconds </Text>
             <TextInput
                 style={styles.TextInput}
                 defaultValue="Enter time in seconds"
                 onSubmitEditing={(e) => {
-                    time = e.nativeEvent.text
-                    console.log(time)
+                    timer(e.nativeEvent.text)
                 }}
             ></TextInput>
             <Button
                 title="Start Timer"
                 onPress={() => {
-                    console.log(`Starting timer... ${time} seconds`)
-                    startTimer(time)
+                    setTimerOn(true)
                 }}
             />
             <StatusBar style="auto" />
