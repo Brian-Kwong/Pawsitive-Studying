@@ -40,14 +40,6 @@ export default function TimerPage() {
             <Text style={textStyles.textHeader}>
                 {Math.floor(time / 60)} M {time % 60} S{' '}
             </Text>
-            <TextInput
-                style={styles.TextInput}
-                placeholder="Enter time in seconds"
-                onSubmitEditing={(e) => {
-                    userTime = e.nativeEvent.text
-                    timer(userTime)
-                }}
-            ></TextInput>
             <View style={styles.horzContainer}>
                 <TouchableOpacity
                     style={styles.Button}
