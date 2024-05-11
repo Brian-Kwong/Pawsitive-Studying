@@ -66,6 +66,16 @@ export const styles = StyleSheet.create({
         margin: '5%, 5%, 5%, 5%',
         boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     },
+    LongButton: {
+        backgroundColor: '#9CC6EF',
+        padding: '5% 5% 5% 5%',
+        borderRadius: 10,
+        margin: '3%, 5%, 3%, 5%',
+        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+        minWidth: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     TabsButton: {
         fontSize: 20,
         borderRadius: 10,
