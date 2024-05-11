@@ -3,6 +3,8 @@ import { styles } from '../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 
+var userTime = 0 // User input time
+
 export default function TimerPage() {
     const [time, timer] = useState(0)
     const [timerOn, setTimerOn] = useState(false)
@@ -25,15 +27,23 @@ export default function TimerPage() {
             <Text style={styles.textHeader}>{time} seconds </Text>
             <TextInput
                 style={styles.TextInput}
-                defaultValue="Enter time in seconds"
+                placeholder="Enter time in seconds"
                 onSubmitEditing={(e) => {
-                    timer(e.nativeEvent.text)
+                    userTime = e.nativeEvent.text
+                    timer(userTime)
                 }}
             ></TextInput>
             <Button
-                title="Start Timer"
+                title={timerOn ? 'Pause Timer' : 'Start Timer'}
                 onPress={() => {
-                    setTimerOn(true)
+                    setTimerOn(!timerOn)
+                }}
+            />
+            <Button
+                title="Reset Timer"
+                onPress={() => {
+                    setTimerOn(false)
+                    timer(userTime)
                 }}
             />
             <StatusBar style="auto" />

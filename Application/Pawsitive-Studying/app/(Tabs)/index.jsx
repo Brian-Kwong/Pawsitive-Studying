@@ -8,9 +8,9 @@ export default function Home() {
         <View style={styles.container}>
             <Text style={styles.textHeader}>🐈🐈Welcome!!🐈🐈</Text>
             <Button
+                style={styles.Button}
                 title="Go to Timer Page"
                 onPress={() => {
-                    console.log('Going to Timer Page...')
                     router.push('../Timer/timer_page')
                 }}
             />
