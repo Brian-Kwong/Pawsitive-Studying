@@ -8,4 +8,4 @@ jobs:
     - name: Install modules
       run: npm install
     - name: Run ESLint
-      run: npx eslint ./Application/Pawsitive-Studying/app/*.jsx      
+      run: npx eslint ./Application/Pawsitive-Studying/app/*.jsx --fix     
