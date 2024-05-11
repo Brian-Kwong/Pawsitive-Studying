@@ -34,7 +34,11 @@ export default function TimerPage() {
                 }}
             ></TextInput>
             <Button
-                title={timerOn ? 'Pause Timer' : 'Start Timer'}
+                title={
+                    timerOn
+                        ? 'Pause Timer'
+                        : `${userTime === time ? 'Start Timer' : 'Resume Timer'}`
+                }
                 onPress={() => {
                     setTimerOn(!timerOn)
                 }}
