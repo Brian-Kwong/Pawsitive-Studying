@@ -1,16 +1,11 @@
-import { TouchableOpacity, TextInput, View, Text } from 'react-native'
-import { styles, textStyles } from '../../../Styles/comp_styles.jsx'
-import { StatusBar } from 'expo-status-bar'
-import { useEffect, useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { View, TouchableOpacity, Text } from 'react-native'
+import { CircularProgress } from 'react-native-circular-progress'
+import { styles, textStyles } from '../../../Styles/comp_styles.jsx' // Import styles from comp-styles.jsx
 import { useLocalSearchParams, useNavigation } from 'expo-router'
 
-var userTime = 0 // User input time
-
-export default function TimerPage() {
-    const [time, timer] = useState(useLocalSearchParams().time)
-    const [timerOn, setTimerOn] = useState(false)
-
-    userTime = useLocalSearchParams().time
+export default CountdownTimer = () => {
+    const duration = useLocalSearchParams().time
 
     const navigation = useNavigation()
 
@@ -22,48 +17,61 @@ export default function TimerPage() {
         })
     }, [navigation])
 
-    /* Timer function */
+    const [remainingTimeMin, setRemaningTimeMin] = useState(duration / 60)
+    const [remainingTimeSec, setRemaningTimeSec] = useState(duration)
+    const [progress, setProgress] = useState(100)
+    const [isRunning, setIsRunning] = useState(false)
+
     useEffect(() => {
-        if (timerOn) {
-            const one_sec_timer = setInterval(() => {
-                timer(time - 1)
+        if (isRunning) {
+            const timer = setInterval(() => {
+                let remainingTimeInSeconds = remainingTimeSec - 1
+                setRemaningTimeSec(remainingTimeInSeconds)
+                setRemaningTimeMin(Math.floor(remainingTimeInSeconds / 60))
+                setProgress((remainingTimeInSeconds / duration) * 100)
             }, 1000)
-            if (time <= 0) {
-                setTimerOn(false)
+            if (remainingTimeSec <= 0) {
+                clearInterval(timer)
+                setIsRunning(false)
             }
-            return () => clearInterval(one_sec_timer)
+            return () => clearInterval(timer)
         }
-    }, [time, timerOn])
+    }, [remainingTimeSec, isRunning])
 
     return (
         <View style={styles.container}>
-            <Text style={textStyles.textHeader}>
-                {Math.floor(time / 60)} M {time % 60} S{' '}
-            </Text>
-            <View style={styles.horzContainer}>
-                <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => {
-                        setTimerOn(!timerOn)
-                    }}
+            <View style={styles.countdownContainer}>
+                <CircularProgress
+                    size={200}
+                    width={10}
+                    fill={progress}
+                    tintColor="#3498db"
+                    backgroundColor="#f0f0f0"
+                    rotation={0}
+                    lineCap="round"
                 >
-                    <Text style={textStyles.textBody}>
-                        {timerOn
-                            ? 'Pause Timer'
-                            : `${userTime === time ? 'Start Timer' : 'Resume Timer'}`}
+                    {() => (
+                        <View style={{ alignItems: 'center' }}>
+                            <Text style={textStyles.textSubHeader}>
+                                {remainingTimeMin}m
+                            </Text>
+                            <Text style={textStyles.textSubHeader}>
+                                {remainingTimeSec % 60}s
+                            </Text>
+                        </View>
+                    )}
+                </CircularProgress>
+                <TouchableOpacity
+                    onPress={() => setIsRunning(!isRunning)}
+                    style={styles.countdownButton}
+                >
+                    <Text style={styles.countdownButtonText}>
+                        {isRunning
+                            ? 'Pause'
+                            : `${duration === remainingTimeSec ? 'Start' : 'Resume'}`}
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => {
-                        setTimerOn(false)
-                        timer(userTime)
-                    }}
-                >
-                    <Text style={textStyles.textBody}>Reset Timer</Text>
-                </TouchableOpacity>
             </View>
-            <StatusBar style="auto" />
         </View>
     )
 }
