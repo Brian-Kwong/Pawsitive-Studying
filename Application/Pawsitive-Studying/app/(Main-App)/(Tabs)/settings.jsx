@@ -1,14 +1,8 @@
-import {
-    TouchableOpacity,
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    ScrollView,
-} from 'react-native'
-import { styles } from '../../Styles/comp_styles.jsx'
+import { TouchableOpacity, Text, View, ScrollView } from 'react-native'
+import { styles } from '../../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { Image } from 'expo-image'
+import { router } from 'expo-router'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
@@ -92,7 +86,9 @@ export default function Settings() {
                     <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            // Do something
+                            router.replace({
+                                pathname: `../../(Login)`,
+                            })
                         }}
                     >
                         <Text style={styles.textBody}>Log Out</Text>

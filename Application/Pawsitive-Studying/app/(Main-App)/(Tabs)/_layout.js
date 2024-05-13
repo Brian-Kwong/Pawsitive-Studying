@@ -2,12 +2,20 @@ import { Tabs } from 'expo-router'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { styles } from '../../Styles/comp_styles.jsx'
+import { styles } from '../../../Styles/comp_styles.jsx'
+import { useNavigation } from 'expo-router'
+import { useEffect } from 'react'
 
 const tabBarIconColor = 'blue'
 const inactiveTabIconColor = 'black'
 
 export default function TabLayout() {
+    const navigation = useNavigation()
+
+    useEffect(() => {
+        navigation.setOptions({ showHeader: false })
+    }, [navigation])
+
     return (
         <Tabs>
             <Tabs.Screen

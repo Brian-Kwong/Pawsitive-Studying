@@ -1,5 +1,5 @@
 import { TouchableOpacity, TextInput, View, Text } from 'react-native'
-import { styles, textStyles } from '../../Styles/comp_styles.jsx'
+import { styles, textStyles } from '../../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { useLocalSearchParams, useNavigation } from 'expo-router'

@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native'
-import { styles } from '../../Styles/comp_styles.jsx'
+import { styles } from '../../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
 
 export default function Cal() {

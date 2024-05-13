@@ -5,7 +5,7 @@ import {
     View,
     TextInput,
 } from 'react-native'
-import { styles, textStyles } from '../../Styles/comp_styles.jsx'
+import { styles, textStyles } from '../../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { router } from 'expo-router'
 

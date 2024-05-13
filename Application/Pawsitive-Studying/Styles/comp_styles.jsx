@@ -45,12 +45,11 @@ export const styles = StyleSheet.create({
     },
     TextInput: {
         backgroundColor: '#F0F5FA',
-        marginTop: '5%',
-        marginBottom: '5%',
-        paddingVertical: '1%',
+        marginTop: '3%',
+        marginBottom: '3%',
         textAlign: 'center',
-        width: 'auto',
-        padding: '5% 5% 5% 5%',
+        width: '50%',
+        padding: '3% 3% 3% 3%',
         borderRadius: 10,
         borderWidth: 1,
     },
@@ -58,6 +57,11 @@ export const styles = StyleSheet.create({
         fontSize: 30,
         color: 'black',
         fontWeight: 'bold',
+    },
+    textButton: {
+        margin: '5%, 5%, 5%, 5%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     Button: {
         backgroundColor: '#9CC6EF',
