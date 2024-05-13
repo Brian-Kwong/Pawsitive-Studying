@@ -31,4 +31,20 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     color: "black",
   },
+
+  // New styles for the countdown timer
+  countdownContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  countdownButton: {
+    backgroundColor: "#3498db",
+    padding: 10,
+    borderRadius: 5,
+  },
+  countdownButtonText: {
+    color: "white",
+    fontSize: 18,
+  },
 });
