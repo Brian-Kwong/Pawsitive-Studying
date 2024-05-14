@@ -1,24 +1,19 @@
-import {
-    View,
-    TextInput,
-    TouchableOpacity,
-    Text,
-    Pressable,
-} from 'react-native'
-import { styles, textStyles } from '../../Styles/comp_styles.jsx'
-import { StatusBar } from 'expo-status-bar'
-import { Image } from 'expo-image'
-import { router } from 'expo-router'
+import { View, TextInput, TouchableOpacity, Text } from "react-native";
+import { styles, textStyles } from "../../Styles/comp_styles.jsx";
+import { StatusBar } from "expo-status-bar";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { generateHash } from "./secure_pass.js";
 
 export default function Welcome() {
-    var userName = null
-    var password = null
+    var userName = null;
+    var password = null;
 
     return (
         <View style={styles.container}>
             <View
                 style={{
-                    width: '30%',
+                    width: "30%",
                     aspectRatio: 1 / 1,
                     marginBottom: 20,
                     marginTop: 20,
@@ -26,14 +21,14 @@ export default function Welcome() {
             >
                 <Image
                     style={{
-                        resizeMode: 'stretch',
-                        height: '100%',
-                        width: '100%',
+                        resizeMode: "stretch",
+                        height: "100%",
+                        width: "100%",
                         borderRadius: 360,
                     }}
                     source="https://i.pinimg.com/564x/34/c3/33/34c3332cb8eb6c448bb4544cd7df4bcd.jpg"
                     contentFit="cover"
-                ></Image>
+                />
             </View>
             <TextInput
                 style={styles.TextInput}
@@ -44,20 +39,30 @@ export default function Welcome() {
             <TextInput
                 style={styles.TextInput}
                 placeholder="Password"
-                autoComplete="new-password"
-                onEndEditing={(event) => (password = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (password = event.nativeEvent.text)}
+                autoComplete="password"
+                onEndEditing={(event) =>
+                    generateHash(event.nativeEvent.text).then((hash) => {
+                        password = hash;
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    generateHash(event.nativeEvent.text).then((hash) => {
+                        password = hash;
+                    })
+                }
                 blurOnSubmit={true}
             />
             <TouchableOpacity
                 style={styles.Button}
                 onPress={() => {
+                    console.log("Logging in with username: " + userName);
+                    console.log("Logging in with password: " + password);
                     if (userName && password) {
                         router.replace({
-                            pathname: '../(Main-App)/(Tabs)',
-                        })
+                            pathname: "../(Main-App)/(Tabs)",
+                        });
                     } else {
-                        alert('Please fill all fields before signing up :D')
+                        alert("Please fill all fields before signing up :D");
                     }
                 }}
             >
@@ -68,7 +73,7 @@ export default function Welcome() {
                     style={styles.textButton}
                     onPress={() =>
                         router.push({
-                            pathname: '/signup',
+                            pathname: "/signup",
                         })
                     }
                 >
@@ -81,5 +86,5 @@ export default function Welcome() {
             </View>
             <StatusBar style="auto" />
         </View>
-    )
+    );
 }
