@@ -4,10 +4,25 @@ import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { generateHash } from "./secure_pass.js";
+import { useState } from "react";
 
 export default function Welcome() {
     var userName = null;
     var password = null;
+
+    const [user, setUser] = useState({
+        username: "",
+        password: "",
+    });
+
+    const loginURL = "";
+    const loginRequest = fetch(loginURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+    });
 
     return (
         <View style={styles.container}>
@@ -58,6 +73,16 @@ export default function Welcome() {
                     console.log("Logging in with username: " + userName);
                     console.log("Logging in with password: " + password);
                     if (userName && password) {
+                        loginRequest.then((response) => {
+                            if (response.status === 200) {
+                                response
+                                    .json()
+                                    .then((data) => console.log(data));
+                                alert("Login successful!");
+                            } else {
+                                alert("Login failed ;-;");
+                            }
+                        });
                         router.replace({
                             pathname: "../(Main-App)/(Tabs)",
                         });
