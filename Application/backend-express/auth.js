@@ -9,7 +9,7 @@ dotenv.config();
 const creds = [];
 
 export function registerUser(req, res) {
-    const { username, pwd } = req.body; // 来自表单
+    const { username, pwd } = req.body; 
     if (!username || !pwd) {
         res.status(400).send("Bad request: Invalid input data.");
     } else if (creds.find((c) => c.username === username)) {
