@@ -17,6 +17,6 @@
         "quotes": ["error", "double"] /* Double quotes are easier to read */,
         "prettier/prettier": 0 /* Let everything be handled by Prettier */,
         "react-native/no-inline-styles": 0 /* Inline styles are fine */,
-        "trailingComma": "allow" /* Trailing commas are ok */,
+        "trailingComma": "off" /* Trailing commas are ok */,
     },
 }
