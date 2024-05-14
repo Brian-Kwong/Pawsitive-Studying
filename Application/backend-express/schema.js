@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
 	memberSince: {
 		type: Date,
 		required: true,
-		default: Date.now, // 使用 Date.now 作为默认值生成函数
+		default: Date.now, 
 	},
 	profileImage: {
 		data: Buffer,
@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
 			trim: true,
 			default: "None"
 		},
-		description: { // 在此加入冒号
+		description: { 
 			type: String,
 			required: false,
 			trim: true,
@@ -67,10 +67,10 @@ const userSchema = new mongoose.Schema({
 		}
 	}],
 	characters: [{
-		type: Schema.Types.ObjectId, // 修正数据类型，添加逗号
+		type: Schema.Types.ObjectId, 
 		ref: "Characters"
 	}]
-}, { collection: "Users" }); // 确保包含结束的大括号和小括号
+}, { collection: "Users" }); 
 
 const charactersSchema = new mongoose.Schema({
 	name: {
