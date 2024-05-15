@@ -1,53 +1,53 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
-import { User, Character } from './user.js'
+import { User, Character } from './schema.js'
 import dotenv from 'dotenv';
-import { User} from './schema.js';
-
 dotenv.config();
 
 
 const creds = [];
 
+export async function registerUser(req, res) {
+    const { name, pronouns, username, email, password, profileImage, tasks, characters } = req.body;
+    console.log(req.body)
 
-//this function is used to login a user
-export function registerUser(req, res) {
-    const { username, pwd } = req.body; 
-    if (!username || !pwd) {
-        res.status(400).send("Bad request: Invalid input data.");
-    } else if (creds.find((c) => c.username === username)) {
-        res.status(409).send("Username already taken");
-    } else {
-        bcrypt.genSalt(10) //this function is used to generate a salt
-            .then((salt) => bcrypt.hash(pwd, salt)) //this function is used to hash the password
-            .then((hashedPassword) => { //this function is used to save the user to the database
-                const newUser = new User({
-                    username,
-                    password: hashedPassword,
-                    email: "",  // new
-                    name: username,  // new
-                });
+    if (!name || !pronouns || !username || !email || !password) {
+        return res.status(400).send("Bad request: Invalid input data.");
+    }
+    
+    try {
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(409).send("Username already taken");
+        }
 
-                newUser.save() //this function is used to save the user to the database
-                    .then(() => generateAccessToken(username))//this function is used to generate a token
-                    .then((token) => {
-                        console.log("token", token);
-                        res.status(201).send({ token });
-                        creds.push({ username, hashedPassword });
-                    })
-                    .catch((error) => {
-                        console.error("Error saving user to the database:", error);
-                        res.status(500).send("Internal server error");
-                    });
-            })
-            .catch((error) => {
-                console.error("Error hashing password:", error);
-                res.status(500).send("Internal server error");
-            });
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        //This is where we would add the character to the database
+        const newUser = new User({
+            name,
+            pronouns,
+            username,
+            email,
+            password: hashedPassword,
+            memberSince: new Date(),
+            profileImage,
+            tasks,
+            characters
+        });
+
+        await newUser.save();
+
+        const token = await generateAccessToken(username);
+        res.status(201).send({ token });
+
+    } catch (error) {
+        res.status(500).send("Internal Server Error");
     }
 }
 
+// This function generates a JWT token for the user
 function generateAccessToken(username) {
     return new Promise((resolve, reject) => {
         jwt.sign(
@@ -65,16 +65,53 @@ function generateAccessToken(username) {
     });
 }
 
-//this function is used to get a user
-export async function getUser(req, res) {
-    const { username } = req.params;
+// This function verifies the JWT token
+export function authenticateUser(req, res, next) {
+    const authHeader = req.headers["authorization"];
+
+    const token = authHeader && authHeader.split(" ")[1];
+    if (!token) {
+        console.log("No token received");
+        res.status(401).end();
+    } else {
+        jwt.verify(
+            token,
+            process.env.TOKEN_SECRET,
+            (error, decoded) => {
+                if (decoded) {
+                    next();
+                } else {
+                    console.log("JWT error:", error);
+                    res.status(401).end();
+                }
+            }
+        );
+    }
+}
+
+// This function logs in the user
+export async function loginUser(req, res) {
+    const { username, password } = req.body; // 从表单获取
+    if (!username || !password) {
+        return res.status(400).send("Bad request: Invalid input data.");
+    }
+
+    //this is where we would check if the user exists in the database
     try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(404).send("User not found");
+        const retrievedUser = await User.findOne({ username });
+        if (!retrievedUser) {
+            return res.status(401).send("Unauthorized: Invalid username or password");
         }
-        res.status(200).json(user);
+
+        const matched = await bcrypt.compare(password, retrievedUser.password);
+        if (!matched) {
+            return res.status(401).send("Unauthorized: Invalid username or password");
+        }
+
+        const token = await generateAccessToken(username);
+        res.status(200).send({ token });
+
     } catch (error) {
-        res.status(500).send("Internal server error");
+        res.status(500).send("Internal Server Error");
     }
 }

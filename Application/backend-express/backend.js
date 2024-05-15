@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
-import { registerUser, getUser } from "./auth.js";
-
+import { registerUser, loginUser } from "./auth.js";
 dotenv.config();
 
 const app = express();
@@ -19,24 +18,23 @@ const mongoCluster = process.env.MONGO_CLUSTER;
 let mongoURI;
 
 if (mongoUser && mongoPwd) {
-    mongoURI = `mongodb+srv://${mongoUser}:${mongoPwd}@${mongoCluster}.mongodb.net/myDatabase?retryWrites=true&w=majority`;
+    mongoURI = `mongodb://${mongoUser}:${mongoPwd}@localhost:27017/${mongoCluster}?authSource=admin`;
 } else {
     mongoURI = `mongodb://localhost:27017/${mongoCluster}`;
 }
 
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
+mongoose.connect(mongoURI).then(() => {
     console.log('Connected to MongoDB');
 }).catch((error) => {
     console.error('Error connecting to MongoDB:', error);
 });
 
 app.post("/signup", registerUser);
+app.post('/login', loginUser);
 
-app.get("/user/:username", getUser);
 
 app.listen(port, () => {
-    console.log(`app listening at http://localhost:${port}`);
+    console.log(
+        `app listening at http://localhost:${port}`
+    );
 });
