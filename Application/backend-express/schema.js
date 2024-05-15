@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+
 const userSchema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -10,7 +11,6 @@ const userSchema = new mongoose.Schema({
 	},
 	pronouns: {
 		type: String,
-		required: false,
 		trim: true,
 	},
 	username: {
@@ -31,11 +31,11 @@ const userSchema = new mongoose.Schema({
 	memberSince: {
 		type: Date,
 		required: true,
-		default: Date.now, 
+		default: Date.now,
 	},
 	profileImage: {
 		data: Buffer,
-		required: false
+		contentType: String
 	},
 	tasks: [{
 		name: {
@@ -45,13 +45,11 @@ const userSchema = new mongoose.Schema({
 		},
 		course: {
 			type: String,
-			required: false,
 			trim: true,
 			default: "None"
 		},
-		description: { 
+		description: {
 			type: String,
-			required: false,
 			trim: true,
 			default: "None"
 		},
@@ -67,10 +65,10 @@ const userSchema = new mongoose.Schema({
 		}
 	}],
 	characters: [{
-		type: Schema.Types.ObjectId, 
+		type: Schema.Types.ObjectId,
 		ref: "Characters"
 	}]
-}, { collection: "Users" }); 
+}, { collection: "Users" });
 
 const charactersSchema = new mongoose.Schema({
 	name: {
@@ -80,7 +78,6 @@ const charactersSchema = new mongoose.Schema({
 	},
 	description: {
 		type: String,
-		required: false,
 		trim: true,
 		default: "None"
 	},
@@ -91,11 +88,11 @@ const charactersSchema = new mongoose.Schema({
 	},
 	image: {
 		data: Buffer,
-		required: false
+		contentType: String
 	}
-}, { collection: "Characters" })
+}, { collection: "Characters" });
 
 const User = mongoose.model("User", userSchema);
 const Character = mongoose.model("Characters", charactersSchema);
 
-export default { User, Character };
+export { User, Character };

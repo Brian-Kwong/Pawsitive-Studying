@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
+import { registerUser } from "./auth.js";
 dotenv.config();
 
 const app = express();
@@ -14,7 +15,13 @@ const mongoUser = process.env.MONGO_USER;
 const mongoPwd = process.env.MONGO_PWD;
 const mongoCluster = process.env.MONGO_CLUSTER;
 
-const mongoURI = `mongodb://${mongoUser}:${mongoPwd}@localhost:27017/${mongoCluster}`;
+let mongoURI;
+
+if (mongoUser && mongoPwd) {
+    mongoURI = `mongodb://${mongoUser}:${mongoPwd}@localhost:27017/${mongoCluster}?authSource=admin`;
+} else {
+    mongoURI = `mongodb://localhost:27017/${mongoCluster}`;
+}
 
 mongoose.connect(mongoURI).then(() => {
     console.log('Connected to MongoDB');
@@ -22,9 +29,7 @@ mongoose.connect(mongoURI).then(() => {
     console.error('Error connecting to MongoDB:', error);
 });
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
+app.post("/signup", registerUser);
 
 app.listen(port, () => {
     console.log(

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import { User, Character } from './user.js'
+import { User, Character } from './schema.js'
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -44,3 +44,5 @@ function generateAccessToken(username) {
         );
     });
 }
+
+export default { registerUser };
