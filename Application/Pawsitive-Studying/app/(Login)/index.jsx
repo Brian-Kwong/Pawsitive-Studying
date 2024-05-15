@@ -7,6 +7,15 @@ import { useState } from "react";
 import { logInWithFaceID, logInWithPassword } from "./security.js";
 
 export default function Welcome() {
+    /* Checks if they are logged in */
+    SecureStore.getItemAsync("Token").then((token) => {
+        if (token != null) {
+            router.replace({
+                pathname: "../(Main-App)/(Tabs)",
+            });
+        }
+    });
+
     const [user, setUser] = useState({
         username: "",
         password: "",
