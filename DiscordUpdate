@@ -1,0 +1,17 @@
+name: expo-full-build
+on:
+    push:
+        branches:
+            - main
+job:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Message
+      uses: appleboy/discord-action@master
+      with:
+        webhook_id: ${{ secrets.WEBHOOK_ID }}
+        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+        message: New GitHub Commit to main ${{ github.event_name }}.  As a reminder when you have the time, please run git pull origin main and npm install the directories to keep your local repo up to date w/ remote Thanks! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
