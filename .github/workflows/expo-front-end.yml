@@ -2,7 +2,7 @@ name: expo-front-end
 on: [pull_request]
 jobs:
     preview:
-        runs-on: macos-latest
+        runs-on: ubuntu-latest
         steps:
             - name: 🏗 Setup repo
               uses: actions/checkout@v3
