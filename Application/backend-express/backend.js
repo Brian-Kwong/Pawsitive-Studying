@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
+import { registerUser, getUser } from "./auth"; 
+
 dotenv.config();
 
 const app = express();
@@ -30,6 +32,13 @@ db.once('open', () => {
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
+
+//User registration
+app.post("/register", registerUser);
+
+//Get user data
+app.get("/user", getUser);
+
 
 app.listen(port, () => {
     console.log(
