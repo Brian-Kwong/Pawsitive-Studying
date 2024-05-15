@@ -1,0 +1,39 @@
+name: expo-full-build
+on:
+    push:
+        branches:
+            - main
+jobs:
+    build:
+        runs-on: macos-latest
+        steps:
+            - name: 🏗 Setup repo
+              uses: actions/checkout@v3
+
+            - name: Change Dir
+              run: cd ./Application/Pawsitive-Studying
+
+            - name: 🏗 Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+                  cache: npm
+
+            - name: 🏗 Setup EAS
+              uses: expo/expo-github-action@v8
+              with:
+                  eas-version: latest
+                  token: ${{ secrets.EXPO_TOKEN }}
+                  package-manager: npm
+
+            - name: 📦 Install dependencies
+              run: npm install
+
+              - name: Install Fastlane
+              run: brew install fastlane
+
+            - name: Set up Fastlane
+              run: export PATH="$HOME/.fastlane/bin:$PATH"\n
+
+            - name: 🚀 Build app
+              run: eas build --non-interactive
