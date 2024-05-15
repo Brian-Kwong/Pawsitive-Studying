@@ -5,16 +5,17 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
 import { logInWithFaceID, logInWithPassword } from "./security.js";
+import * as SecureStore from "expo-secure-store";
 
 export default function Welcome() {
     /* Checks if they are logged in */
-    SecureStore.getItemAsync("Token").then((token) => {
-        if (token != null) {
-            router.replace({
-                pathname: "../(Main-App)/(Tabs)",
-            });
-        }
-    });
+    // SecureStore.getItemAsync("Token").then((token) => {
+    //     if (token != null) {
+    //         router.replace({
+    //             pathname: "../(Main-App)/(Tabs)",
+    //         });
+    //     }
+    // });
 
     const [user, setUser] = useState({
         username: "",
@@ -76,22 +77,25 @@ export default function Welcome() {
                 }
                 blurOnSubmit={true}
             />
-            <TouchableOpacity
-                style={styles.Button}
-                onPress={() => {
-                    if (user.username != "" && user.password != "") {
-                        logInWithPassword(user)
-                            .then(() => {
-                                router.replace({
-                                    pathname: "../(Main-App)/(Tabs)",
-                                });
-                            })
-                            .catch(() => {});
-                    }
-                }}
-            >
-                <Text style={textStyles.textBody}>Login</Text>
+            <View style={styles.horzContainer}>
                 <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => {
+                        if (user.username != "" && user.password != "") {
+                            logInWithPassword(user)
+                                .then(() => {
+                                    router.replace({
+                                        pathname: "../(Main-App)/(Tabs)",
+                                    });
+                                })
+                                .catch(() => {});
+                        }
+                    }}
+                >
+                    <Text style={textStyles.textBody}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.Button}
                     onPress={() => {
                         logInWithFaceID()
                             .then(() => {
@@ -104,7 +108,7 @@ export default function Welcome() {
                 >
                     <Text style={textStyles.textBody}>Login with FaceID </Text>
                 </TouchableOpacity>
-            </TouchableOpacity>
+            </View>
             <View style={styles.horzContainer}>
                 <TouchableOpacity
                     style={styles.textButton}
