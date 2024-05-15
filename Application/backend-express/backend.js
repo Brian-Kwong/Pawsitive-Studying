@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
-import { registerUser } from "./auth.js";
+import { registerUser, loginUser } from "./auth.js";
 dotenv.config();
 
 const app = express();
@@ -30,6 +30,8 @@ mongoose.connect(mongoURI).then(() => {
 });
 
 app.post("/signup", registerUser);
+app.post('/login', loginUser);
+
 
 app.listen(port, () => {
     console.log(
