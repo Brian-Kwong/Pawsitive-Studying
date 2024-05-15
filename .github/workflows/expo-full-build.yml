@@ -37,4 +37,5 @@ jobs:
               run: export PATH="$HOME/.fastlane/bin:$PATH"\n
 
             - name: 🚀 Build app
+              working-directory: ./Application/Pawsitive-Studying
               run: eas build --local -p ios --profile preview --non-interactive
