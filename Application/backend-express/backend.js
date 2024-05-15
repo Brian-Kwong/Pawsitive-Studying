@@ -32,6 +32,26 @@ mongoose.connect(mongoURI).then(() => {
 app.post("/signup", registerUser);
 app.post('/login', loginUser);
 
+/* GET <server>/login/user?username=
+                    <username>password=<password>
+            returns user token */
+app.get("/users", (req, res) => {
+    // generate the user token, do I import?
+    return loginUser(req, res);
+})
+
+// POST <server>/user new user to db
+app.post("/users", (req, res) => {
+    const newUser = req.body;
+    const username = req.query.username;
+    // Check if username already exists
+    const existingUser = User.findOne({ username });
+        if (existingUser) {
+            return res.status(409).send("Username already taken");
+        }
+        // Call register user if not exists
+        else return(registerUser(newUser, res));
+})
 
 app.listen(port, () => {
     console.log(
