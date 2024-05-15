@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
-import { registerUser, getUser } from "./auth"; 
-
+import { registerUser } from "./auth.js";
 dotenv.config();
 
 const app = express();
@@ -11,34 +10,26 @@ app.use(cors());
 app.use(express.json());
 
 const port = process.env.PORT || 3000;
-const MONGO_USER = process.env.MONGO_USER;
-const MONGO_PWD = process.env.MONGO_PWD;
-const MONGO_CLUSTER = process.env.MONGO_CLUSTER;
 
-const uri = "mongodb://127.0.0.1:27017/csc";
+const mongoUser = process.env.MONGO_USER;
+const mongoPwd = process.env.MONGO_PWD;
+const mongoCluster = process.env.MONGO_CLUSTER;
 
-mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+let mongoURI;
 
-const db = mongoose.connection;
+if (mongoUser && mongoPwd) {
+    mongoURI = `mongodb://${mongoUser}:${mongoPwd}@localhost:27017/${mongoCluster}?authSource=admin`;
+} else {
+    mongoURI = `mongodb://localhost:27017/${mongoCluster}`;
+}
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
+mongoose.connect(mongoURI).then(() => {
     console.log('Connected to MongoDB');
+}).catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
 });
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
-
-//User registration
-app.post("/register", registerUser);
-
-//Get user data
-app.get("/user", getUser);
-
+app.post("/signup", registerUser);
 
 app.listen(port, () => {
     console.log(
