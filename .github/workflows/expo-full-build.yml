@@ -29,7 +29,7 @@ jobs:
             - name: 📦 Install dependencies
               run: npm install
 
-              - name: Install Fastlane
+            - name: Install Fastlane
               run: brew install fastlane
 
             - name: Set up Fastlane
