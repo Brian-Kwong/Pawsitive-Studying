@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { User, Character } from './schema.js'
 import dotenv from 'dotenv';
-import { User} from './schema.js';
+
 
 dotenv.config();
 
