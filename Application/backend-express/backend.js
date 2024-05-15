@@ -9,22 +9,17 @@ app.use(cors());
 app.use(express.json());
 
 const port = process.env.PORT || 3000;
-const MONGO_USER = process.env.MONGO_USER;
-const MONGO_PWD = process.env.MONGO_PWD;
-const MONGO_CLUSTER = process.env.MONGO_CLUSTER;
 
-const uri = "mongodb://127.0.0.1:27017/csc";
+const mongoUser = process.env.MONGO_USER;
+const mongoPwd = process.env.MONGO_PWD;
+const mongoCluster = process.env.MONGO_CLUSTER;
 
-mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+const mongoURI = `mongodb://${mongoUser}:${mongoPwd}@localhost:27017/${mongoCluster}`;
 
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
+mongoose.connect(mongoURI).then(() => {
     console.log('Connected to MongoDB');
+}).catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
 });
 
 app.get("/", (req, res) => {
