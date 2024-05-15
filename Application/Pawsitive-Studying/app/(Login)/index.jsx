@@ -1,16 +1,13 @@
-import { View, TextInput, TouchableOpacity, Text } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, Alert } from "react-native";
 import { styles, textStyles } from "../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { generateHash } from "./secure_pass.js";
 import { useState } from "react";
 import * as SecureStore from "expo-secure-store";
+import * as LocalAuthentication from "expo-local-authentication";
 
 export default function Welcome() {
-    var userName = null;
-    var password = null;
-
     const [user, setUser] = useState({
         username: "",
         password: "",
@@ -49,60 +46,83 @@ export default function Welcome() {
             <TextInput
                 style={styles.TextInput}
                 placeholder="Username"
-                onEndEditing={(event) => (userName = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (userName = event.nativeEvent.text)}
+                onEndEditing={(event) =>
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: user.password,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: user.password,
+                    })
+                }
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder="Password"
                 autoComplete="password"
-                onEndEditing={(event) => {
-                    password = event.nativeEvent.text;
-                    SecureStore.setItemAsync("Token", password)
-                        .then(() => {
-                            console.log("Stored credentials");
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                        });
-                }}
-                onSubmitEditing={(event) => {
-                    password = event.nativeEvent.text;
-                    SecureStore.setItemAsync("Token", password)
-                        .then(() => {
-                            console.log("Stored credentials");
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                        });
-                }}
+                onEndEditing={(event) =>
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: event.nativeEvent.text,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        username: user.username,
+                        password: event.nativeEvent.text,
+                    })
+                }
                 blurOnSubmit={true}
             />
             <TouchableOpacity
                 style={styles.Button}
                 onPress={() => {
-                    console.log("Logging in with username: " + userName);
-                    console.log("Logging in with password: " + password);
-                    if (userName && password) {
-                        // loginRequest.then((response) => {
-                        //     if (response.status === 200) {
-                        //         response
-                        //             .json()
-                        //             .then(() => {
-                        //                 SecureStore.setItemAsync("Token", data).then(
-                        //                     () => {
-                        //                         console.log("Stored credentials");
-                        //                     }
-                        //                 )
+                    if (user.username != "" && user.password != "") {
+                        // loginRequest
+                        //     .then((response) => {
+                        //         if (response.status === 200) {
+                        //             response.json().then((data) => {
+                        //                 if (data != null) {
+                        //                     SecureStore.setItemAsync(
+                        //                         "Token",
+                        //                         data
+                        //                     )
+                        //                         .then(() => {
+                        //                             console.log(
+                        //                                 "Stored credentials"
+                        //                             );
+                        //                         })
+                        //                         .catch((err) => {
+                        //                             console.log(err);
+                        //                         });
+                        //                 }
                         //             });
-                        //         alert("Login successful!");
-                        //     } else {
-                        //         alert("Login failed ;-;");
-                        //     }
-                        // });
-                        router.replace({
-                            pathname: "../(Main-App)/(Tabs)",
-                        });
+                        //         } else {
+                        //             alert("Login failed ;-;");
+                        //         }
+                        //     })
+
+                        //     .catch((err) => {
+                        //         console.log(err);
+                        //     });
+                        LocalAuthentication.authenticateAsync(
+                            (disableDeviceFallback = true)
+                        )
+                            .then((result) => {
+                                if (result.success) {
+                                    router.replace({
+                                        pathname: "../(Main-App)/(Tabs)",
+                                    });
+                                } else {
+                                    alert(result.error);
+                                }
+                            })
+                            .catch((err) => {
+                                alert(err);
+                            });
                     } else {
                         alert("Please fill all fields before signing up :D");
                     }
