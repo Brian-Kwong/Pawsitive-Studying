@@ -37,4 +37,4 @@ jobs:
               run: export PATH="$HOME/.fastlane/bin:$PATH"\n
 
             - name: 🚀 Build app
-              run: eas build --non-interactive
+              run: eas build --local -p ios --profile preview --non-interactive
