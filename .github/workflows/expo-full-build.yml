@@ -3,6 +3,7 @@ on:
     push:
         branches:
             - main
+            - login_page_with_hash
 jobs:
     build:
         runs-on: macos-latest
