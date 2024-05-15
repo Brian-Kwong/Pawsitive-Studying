@@ -1,27 +1,24 @@
-import { View, TextInput, TouchableOpacity, Text } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, Alert } from "react-native";
 import { styles, textStyles } from "../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { generateHash } from "./secure_pass.js";
 import { useState } from "react";
+import { logInWithFaceID, logInWithPassword } from "./security.js";
 
 export default function Welcome() {
-    var userName = null;
-    var password = null;
+    /* Checks if they are logged in */
+    SecureStore.getItemAsync("Token").then((token) => {
+        if (token != null) {
+            router.replace({
+                pathname: "../(Main-App)/(Tabs)",
+            });
+        }
+    });
 
     const [user, setUser] = useState({
         username: "",
         password: "",
-    });
-
-    const loginURL = "";
-    const loginRequest = fetch(loginURL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
     });
 
     return (
@@ -48,21 +45,33 @@ export default function Welcome() {
             <TextInput
                 style={styles.TextInput}
                 placeholder="Username"
-                onEndEditing={(event) => (userName = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (userName = event.nativeEvent.text)}
+                onEndEditing={(event) =>
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: user.password,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: user.password,
+                    })
+                }
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder="Password"
                 autoComplete="password"
                 onEndEditing={(event) =>
-                    generateHash(event.nativeEvent.text).then((hash) => {
-                        password = hash;
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: event.nativeEvent.text,
                     })
                 }
                 onSubmitEditing={(event) =>
-                    generateHash(event.nativeEvent.text).then((hash) => {
-                        password = hash;
+                    setUser({
+                        username: user.username,
+                        password: event.nativeEvent.text,
                     })
                 }
                 blurOnSubmit={true}
@@ -70,28 +79,31 @@ export default function Welcome() {
             <TouchableOpacity
                 style={styles.Button}
                 onPress={() => {
-                    console.log("Logging in with username: " + userName);
-                    console.log("Logging in with password: " + password);
-                    if (userName && password) {
-                        loginRequest.then((response) => {
-                            if (response.status === 200) {
-                                response
-                                    .json()
-                                    .then((data) => console.log(data));
-                                alert("Login successful!");
-                            } else {
-                                alert("Login failed ;-;");
-                            }
-                        });
-                        router.replace({
-                            pathname: "../(Main-App)/(Tabs)",
-                        });
-                    } else {
-                        alert("Please fill all fields before signing up :D");
+                    if (user.username != "" && user.password != "") {
+                        logInWithPassword(user)
+                            .then(() => {
+                                router.replace({
+                                    pathname: "../(Main-App)/(Tabs)",
+                                });
+                            })
+                            .catch(() => {});
                     }
                 }}
             >
                 <Text style={textStyles.textBody}>Login</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        logInWithFaceID()
+                            .then(() => {
+                                router.replace({
+                                    pathname: "../(Main-App)/(Tabs)",
+                                });
+                            })
+                            .catch(() => {});
+                    }}
+                >
+                    <Text style={textStyles.textBody}>Login with FaceID </Text>
+                </TouchableOpacity>
             </TouchableOpacity>
             <View style={styles.horzContainer}>
                 <TouchableOpacity

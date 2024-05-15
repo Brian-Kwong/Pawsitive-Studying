@@ -4,11 +4,15 @@ import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
 import { useEffect } from "react";
+import { makeNewUser } from "./security.js";
 
 export default function Signup() {
-    var userName = null;
-    var email = null;
-    var password = null;
+    const [user, setUser] = useState({
+        name: "",
+        pronouns: "",
+        username: "",
+        password: "",
+    });
 
     const navigation = useNavigation();
 
@@ -44,30 +48,52 @@ export default function Signup() {
             <TextInput
                 style={styles.TextInput}
                 placeholder="Username"
-                onEndEditing={(event) => (userName = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (userName = event.nativeEvent.text)}
+                onEndEditing={(event) =>
+                    (user.username = event.nativeEvent.text)
+                }
+                onSubmitEditing={(event) =>
+                    (user.username = event.nativeEvent.text)
+                }
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder="Email"
                 autoComplete="email"
-                onEndEditing={(event) => (email = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (email = event.nativeEvent.text)}
+                onEndEditing={(event) => (user.email = event.nativeEvent.text)}
+                onSubmitEditing={(event) =>
+                    (user.email = event.nativeEvent.text)
+                }
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder="Password"
                 autoComplete="new-password"
-                onEndEditing={(event) => (password = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (password = event.nativeEvent.text)}
+                onEndEditing={(event) =>
+                    (user.password = event.nativeEvent.text)
+                }
+                onSubmitEditing={(event) =>
+                    (user.password = event.nativeEvent.text)
+                }
             />
             <TouchableOpacity
                 style={styles.Button}
                 onPress={() => {
-                    if (userName && email && password) {
-                        router.replace({
-                            pathname: "../(Main-App)",
-                        });
+                    if (
+                        user.email != "" &&
+                        user.name != "" &&
+                        user.password != ""
+                    ) {
+                        makeNewUser(user)
+                            .then((res) => {
+                                if (res == 200) {
+                                    router.replace({
+                                        pathname: "../(Main-App)",
+                                    });
+                                } else {
+                                    return;
+                                }
+                            })
+                            .catch(() => {});
                     } else {
                         alert("Please fill all fields before signing up :D");
                     }
