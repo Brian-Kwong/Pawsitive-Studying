@@ -4,22 +4,12 @@ import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
-import * as SecureStore from "expo-secure-store";
-import * as LocalAuthentication from "expo-local-authentication";
+import { logInWithFaceID, logInWithPassword } from "./security.js";
 
 export default function Welcome() {
     const [user, setUser] = useState({
         username: "",
         password: "",
-    });
-
-    const loginURL = "";
-    const loginRequest = fetch(loginURL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
     });
 
     return (
@@ -81,54 +71,30 @@ export default function Welcome() {
                 style={styles.Button}
                 onPress={() => {
                     if (user.username != "" && user.password != "") {
-                        // loginRequest
-                        //     .then((response) => {
-                        //         if (response.status === 200) {
-                        //             response.json().then((data) => {
-                        //                 if (data != null) {
-                        //                     SecureStore.setItemAsync(
-                        //                         "Token",
-                        //                         data
-                        //                     )
-                        //                         .then(() => {
-                        //                             console.log(
-                        //                                 "Stored credentials"
-                        //                             );
-                        //                         })
-                        //                         .catch((err) => {
-                        //                             console.log(err);
-                        //                         });
-                        //                 }
-                        //             });
-                        //         } else {
-                        //             alert("Login failed ;-;");
-                        //         }
-                        //     })
-
-                        //     .catch((err) => {
-                        //         console.log(err);
-                        //     });
-                        LocalAuthentication.authenticateAsync(
-                            (disableDeviceFallback = true)
-                        )
-                            .then((result) => {
-                                if (result.success) {
-                                    router.replace({
-                                        pathname: "../(Main-App)/(Tabs)",
-                                    });
-                                } else {
-                                    alert(result.error);
-                                }
+                        logInWithPassword(user)
+                            .then(() => {
+                                router.replace({
+                                    pathname: "../(Main-App)/(Tabs)",
+                                });
                             })
-                            .catch((err) => {
-                                alert(err);
-                            });
-                    } else {
-                        alert("Please fill all fields before signing up :D");
+                            .catch(() => {});
                     }
                 }}
             >
                 <Text style={textStyles.textBody}>Login</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        logInWithFaceID()
+                            .then(() => {
+                                router.replace({
+                                    pathname: "../(Main-App)/(Tabs)",
+                                });
+                            })
+                            .catch(() => {});
+                    }}
+                >
+                    <Text style={textStyles.textBody}>Login with FaceID </Text>
+                </TouchableOpacity>
             </TouchableOpacity>
             <View style={styles.horzContainer}>
                 <TouchableOpacity
