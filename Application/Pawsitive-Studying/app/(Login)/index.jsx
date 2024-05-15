@@ -5,6 +5,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { generateHash } from "./secure_pass.js";
 import { useState } from "react";
+import * as SecureStore from "expo-secure-store";
 
 export default function Welcome() {
     var userName = null;
@@ -55,16 +56,26 @@ export default function Welcome() {
                 style={styles.TextInput}
                 placeholder="Password"
                 autoComplete="password"
-                onEndEditing={(event) =>
-                    generateHash(event.nativeEvent.text).then((hash) => {
-                        password = hash;
-                    })
-                }
-                onSubmitEditing={(event) =>
-                    generateHash(event.nativeEvent.text).then((hash) => {
-                        password = hash;
-                    })
-                }
+                onEndEditing={(event) => {
+                    password = event.nativeEvent.text;
+                    SecureStore.setItemAsync("Token", password)
+                        .then(() => {
+                            console.log("Stored credentials");
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                }}
+                onSubmitEditing={(event) => {
+                    password = event.nativeEvent.text;
+                    SecureStore.setItemAsync("Token", password)
+                        .then(() => {
+                            console.log("Stored credentials");
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                }}
                 blurOnSubmit={true}
             />
             <TouchableOpacity
@@ -73,16 +84,22 @@ export default function Welcome() {
                     console.log("Logging in with username: " + userName);
                     console.log("Logging in with password: " + password);
                     if (userName && password) {
-                        loginRequest.then((response) => {
-                            if (response.status === 200) {
-                                response
-                                    .json()
-                                    .then((data) => console.log(data));
-                                alert("Login successful!");
-                            } else {
-                                alert("Login failed ;-;");
-                            }
-                        });
+                        // loginRequest.then((response) => {
+                        //     if (response.status === 200) {
+                        //         response
+                        //             .json()
+                        //             .then(() => {
+                        //                 SecureStore.setItemAsync("Token", data).then(
+                        //                     () => {
+                        //                         console.log("Stored credentials");
+                        //                     }
+                        //                 )
+                        //             });
+                        //         alert("Login successful!");
+                        //     } else {
+                        //         alert("Login failed ;-;");
+                        //     }
+                        // });
                         router.replace({
                             pathname: "../(Main-App)/(Tabs)",
                         });
