@@ -14,7 +14,7 @@ export async function registerUser(req, res) {
     if (!name || !pronouns || !username || !email || !password) {
         return res.status(400).send("Bad request: Invalid input data.");
     }
-    
+
     try {
         const existingUser = await User.findOne({ username });
         if (existingUser) {

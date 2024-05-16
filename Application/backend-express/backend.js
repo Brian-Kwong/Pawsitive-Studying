@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
-import { registerUser, loginUser } from "./auth.js";
+import { registerUser, loginUser, authenticateUser } from "./auth.js";
 dotenv.config();
 
 const app = express();
@@ -32,6 +32,15 @@ mongoose.connect(mongoURI).then(() => {
 app.post("/signup", registerUser);
 app.post('/login', loginUser);
 
+//get all users
+app.get('/users', authenticateUser, async (req, res) => {  
+    try {
+        const users = await User.find();
+        res.status(200).send(users);
+    } catch (err) {
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 app.listen(port, () => {
     console.log(
