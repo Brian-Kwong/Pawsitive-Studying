@@ -8,6 +8,8 @@ import {
     conflictUser,
     authenticateUser,
     getUsers,
+    getUserByUsernameOrEmail,
+    getUserById,
 } from "./auth.js";
 dotenv.config();
 
@@ -84,7 +86,6 @@ app.get("/users", authenticateUser, async (req, res) => {
 app.listen(port, () => {
     console.log(`app listening at http://localhost:${port}`);
 });
-
 
 app.get("/user", (req, res) => {
     const { username, email } = req.query;
