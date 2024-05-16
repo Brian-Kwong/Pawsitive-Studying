@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema(
     {
@@ -47,12 +47,12 @@ const userSchema = new mongoose.Schema(
                 course: {
                     type: String,
                     trim: true,
-                    default: 'None',
+                    default: "None",
                 },
                 description: {
                     type: String,
                     trim: true,
-                    default: 'None',
+                    default: "None",
                 },
                 time: {
                     type: Number,
@@ -69,12 +69,12 @@ const userSchema = new mongoose.Schema(
         characters: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'Characters',
+                ref: "Characters",
             },
         ],
     },
-    { collection: 'Users' }
-)
+    { collection: "Users" }
+);
 
 const charactersSchema = new mongoose.Schema(
     {
@@ -86,7 +86,7 @@ const charactersSchema = new mongoose.Schema(
         description: {
             type: String,
             trim: true,
-            default: 'None',
+            default: "None",
         },
         pointsRequired: {
             type: Number,
@@ -98,10 +98,10 @@ const charactersSchema = new mongoose.Schema(
             contentType: String,
         },
     },
-    { collection: 'Characters' }
-)
+    { collection: "Characters" }
+);
 
-const User = mongoose.model('User', userSchema)
-const Character = mongoose.model('Characters', charactersSchema)
+const User = mongoose.model("User", userSchema);
+const Character = mongoose.model("Characters", charactersSchema);
 
-export { User, Character }
+export { User, Character };
