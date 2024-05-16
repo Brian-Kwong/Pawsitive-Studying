@@ -38,3 +38,34 @@ app.listen(port, () => {
         `app listening at http://localhost:${port}`
     );
 });
+
+
+app.get("/user", (req, res) => {
+    const { username, email } = req.query;
+    getUserByUsernameOrEmail(username, email)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+            res.json(user);
+        })
+        .catch((error) => {
+            console.error("Error fetching user:", error);
+            res.status(500).json({ error: "Internal server error" });
+        });
+});
+
+app.get("/user/:id", (req, res) => {
+    const { id } = req.params;
+    getUserById(id)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+            res.json(user);
+        })
+        .catch((error) => {
+            console.error("Error fetching user:", error);
+            res.status(500).json({ error: "Internal server error" });
+        });
+});

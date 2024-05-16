@@ -118,3 +118,34 @@ export async function loginUser(req, res) {
         res.status(500).send("Internal Server Error");
     }
 }
+
+
+export const getUserByUsernameOrEmail = (username, email) => {
+    let promise;
+    if (username === undefined && email === undefined) {
+        promise = User.find();
+    } else if (username && !email) {
+        promise = findUserByUsername(username);
+    } else if (email && !username) {
+        promise = findUserByEmail(email);
+    } else if (username && email) {
+        promise = findUserByUsernameAndEmail(username, email);
+    }
+    return promise;
+};
+
+function findUserByUsername(username) {
+    return User.findOne({ username });
+}
+
+function findUserByEmail(email) {
+    return User.findOne({ email });
+}
+
+function findUserByUsernameAndEmail(username, email) {
+    return User.findOne({ username, email });
+}
+
+export const getUserById = (id) => {
+    return User.findById(id);
+};
