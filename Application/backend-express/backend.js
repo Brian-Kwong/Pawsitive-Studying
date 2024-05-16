@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
+import {getUserTasks,addUserTask} from "./user.js"
 import { registerUser, loginUser, authenticateUser } from "./auth.js";
 dotenv.config();
 
@@ -41,6 +42,10 @@ app.get('/users', authenticateUser, async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
+
+app.get('/users/:id/tasks', authenticateUser, getUserTasks);
+app.post('/users/:id/task',authenticateUser, addUserTask);
 
 app.listen(port, () => {
     console.log(
