@@ -17,6 +17,16 @@ export async function conflictUser(username) {
     });
 }
 
+export async function getUsers() {
+    return User.find()
+        .then((users) => {
+            return users;
+        })
+        .catch((error) => {
+            throw error;
+        });
+}
+
 export async function registerUser(req, res) {
     const {
         name,
