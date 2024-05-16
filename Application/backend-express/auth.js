@@ -106,7 +106,9 @@ export function authenticateUser(req, res, next) {
 }
 
 export async function loginUser(req, res) {
-    const { username, password } = req.body // 从表单获取
+    const username = req.params['username'] // 从表单获取
+    const password = req.params['password'] // 从表单获取
+    console.log(username, password)
     if (!username || !password) {
         return res.status(400).send('Bad request: Invalid input data.')
     }

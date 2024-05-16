@@ -39,7 +39,7 @@ app.post('/login', loginUser)
 /* GET <server>/login/user?username=
                     <username>password=<password>
             returns user token */
-app.get('/users', (req, res) => {
+app.get('/users/:username/:password', (req, res) => {
     // generate the user token, do I import?
     // 200 Get request for successful retrieval
     return loginUser(req, res).then(() => {})
