@@ -1,7 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 
-const loginURL = "http://10.151.71.149:3000/users/";
+const loginURL = "http://10.151.71.149:3000/users/"; // Change to your server's IP address
+// I use my Mac's IP address to test the server on my phone
 
 // Fetches login request from server
 function login(username, password) {
