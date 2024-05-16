@@ -1,11 +1,12 @@
-import { TouchableOpacity, Text, View, ScrollView } from 'react-native'
-import { styles } from '../../../Styles/comp_styles.jsx'
-import { StatusBar } from 'expo-status-bar'
-import { Image } from 'expo-image'
-import { router } from 'expo-router'
+import { TouchableOpacity, Text, View, ScrollView } from "react-native";
+import { styles } from "../../../Styles/comp_styles.jsx";
+import { StatusBar } from "expo-status-bar";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 const blurhash =
-    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
+    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 export default function Settings() {
     return (
@@ -13,7 +14,7 @@ export default function Settings() {
             <View style={styles.topContainer}>
                 <View
                     style={{
-                        width: '30%',
+                        width: "30%",
                         aspectRatio: 1 / 1,
                         marginBottom: 20,
                         marginTop: 20,
@@ -21,9 +22,9 @@ export default function Settings() {
                 >
                     <Image
                         style={{
-                            resizeMode: 'stretch',
-                            height: '100%',
-                            width: '100%',
+                            resizeMode: "stretch",
+                            height: "100%",
+                            width: "100%",
                             borderRadius: 360,
                         }}
                         placeholder={{ blurhash }}
@@ -86,9 +87,11 @@ export default function Settings() {
                     <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            router.replace({
-                                pathname: `../../(Login)`,
-                            })
+                            SecureStore.deleteItemAsync("Token").then(() => {
+                                router.replace({
+                                    pathname: "../../(Login)",
+                                });
+                            });
                         }}
                     >
                         <Text style={styles.textBody}>Log Out</Text>
@@ -97,5 +100,5 @@ export default function Settings() {
                 <StatusBar style="auto" />
             </View>
         </ScrollView>
-    )
+    );
 }

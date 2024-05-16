@@ -1,53 +1,60 @@
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 
-const loginURL = "";
+const loginURL = "http://10.151.71.149:3000/users/";
 
 // Fetches login request from server
 function login(username, password) {
-    return fetch(loginURL, {
+    const url = loginURL + username + "/" + password;
+    return fetch(url, {
         method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        }),
     });
 }
 
 // This function logs in a user with a username and password
 export function logInWithPassword(user) {
     return new Promise((resolve, reject) => {
-        login(user.username, user.password).then((response) => {
-            if (response.status === 200) {
-                response.json().then((data) => {
-                    if (data != null) {
-                        SecureStore.setItemAsync("Token", data)
-                            .then(() => {
-                                resolve(200);
-                            })
-                            .catch((err) => {
-                                alert(
-                                    "Failed to store login Try restarting the app."
-                                );
-                                reject(err);
-                            });
-                    }
+        login(user.username, user.password)
+            .then((response) => {
+                SecureStore.setItemAsync("Username", user.username).then(() => {
+                    SecureStore.setItemAsync("Password", user.password).then(
+                        () => {
+                            if (response.status === 200) {
+                                response.json().then((data) => {
+                                    if (data != null) {
+                                        SecureStore.setItemAsync(
+                                            "Token",
+                                            data.token
+                                        )
+                                            .then(() => {
+                                                resolve(200);
+                                            })
+                                            .catch((err) => {
+                                                alert(
+                                                    "Failed to store login Try restarting the app."
+                                                );
+                                                reject(err);
+                                            });
+                                    }
+                                });
+                            } else {
+                                alert("Server failed to authenticate account");
+                                reject(401);
+                            }
+                        }
+                    );
                 });
-            } else {
-                alert("Server failed to authenticate account");
-                reject(401);
-            }
-        });
+            })
+            .catch((err) => {
+                reject(err);
+            });
     });
 }
 
 // This function logs in a user with FaceID
 export function logInWithFaceID() {
     return new Promise((resolve, reject) => {
-        LocalAuthentication.authenticateAsync((disableDeviceFallback = true))
+        LocalAuthentication.authenticateAsync({ disableDeviceFallback: false })
             .then((result) => {
                 if (result.success) {
                     SecureStore.getItemAsync("Username").then((username) => {
@@ -64,7 +71,7 @@ export function logInWithFaceID() {
                                                             if (data != null) {
                                                                 SecureStore.setItemAsync(
                                                                     "Token",
-                                                                    data
+                                                                    data.token
                                                                 )
                                                                     .then(
                                                                         () => {
@@ -74,9 +81,7 @@ export function logInWithFaceID() {
                                                                         }
                                                                     )
                                                                     .catch(
-                                                                        (
-                                                                            err
-                                                                        ) => {
+                                                                        () => {
                                                                             // Failed to store token cant continue...
                                                                             alert(
                                                                                 "Failed to store login Try restarting the app."
@@ -123,7 +128,7 @@ export function logInWithFaceID() {
                     });
                 }
             })
-            .catch((err) => {
+            .catch(() => {
                 alert("Failed to authenticate with FaceID ");
                 reject(500);
             });
@@ -133,7 +138,7 @@ export function logInWithFaceID() {
 export function makeNewUser(user) {
     return new Promise((resolve, reject) => {
         // Fetches signup request from server
-        fetch(signupURL, {
+        fetch(loginURL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -150,26 +155,32 @@ export function makeNewUser(user) {
             }),
         })
             .then((response) => {
-                if (response.status === 200) {
+                if (response.status === 201) {
                     // Made new user okay
-                    response.json().then((data) => {
-                        if (data != null) {
-                            // Store the token
-                            SecureStore.setItemAsync("Token", data)
-                                .then(() => {
-                                    resolve(200);
-                                })
-                                .catch(
-                                    // Failed to store token
-                                    () => {
-                                        alert(
-                                            "Failed to store login Try restarting the app."
-                                        );
-                                        reject(400);
-                                    }
-                                );
-                        }
-                    });
+                    response
+                        .json()
+                        .then((data) => {
+                            if (data !== null) {
+                                // Store the token
+                                SecureStore.setItemAsync("Token", data.token)
+                                    .then(() => {
+                                        resolve(200);
+                                    })
+                                    .catch(
+                                        // Failed to store token
+                                        () => {
+                                            alert(
+                                                "Failed to store login Try restarting the app."
+                                            );
+                                            reject(400);
+                                        }
+                                    );
+                            }
+                        })
+                        .catch((err) => {
+                            alert(err);
+                            reject(410);
+                        });
                 } else if (response.status === 410) {
                     // Username already taken chose another one
                     alert("Username already taken");
@@ -177,6 +188,9 @@ export function makeNewUser(user) {
                 } else if (response.status >= 500) {
                     // Idk not my problem backend's problem
                     alert("Failed to create user Internal Server Error");
+                    reject(500);
+                } else {
+                    alert("Failed to create user");
                     reject(500);
                 }
             })

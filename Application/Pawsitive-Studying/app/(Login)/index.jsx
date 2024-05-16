@@ -9,13 +9,13 @@ import * as SecureStore from "expo-secure-store";
 
 export default function Welcome() {
     /* Checks if they are logged in */
-    // SecureStore.getItemAsync("Token").then((token) => {
-    //     if (token != null) {
-    //         router.replace({
-    //             pathname: "../(Main-App)/(Tabs)",
-    //         });
-    //     }
-    // });
+    SecureStore.getItemAsync("Token").then((token) => {
+        if (token != null) {
+            router.replace({
+                pathname: "../(Main-App)/(Tabs)",
+            });
+        }
+    });
 
     const [user, setUser] = useState({
         username: "",
@@ -65,7 +65,7 @@ export default function Welcome() {
                 autoComplete="password"
                 onEndEditing={(event) =>
                     setUser({
-                        username: event.nativeEvent.text,
+                        username: user.username,
                         password: event.nativeEvent.text,
                     })
                 }
@@ -81,14 +81,18 @@ export default function Welcome() {
                 <TouchableOpacity
                     style={styles.Button}
                     onPress={() => {
-                        if (user.username != "" && user.password != "") {
+                        if (user.username !== "" && user.password !== "") {
                             logInWithPassword(user)
                                 .then(() => {
                                     router.replace({
                                         pathname: "../(Main-App)/(Tabs)",
                                     });
                                 })
-                                .catch(() => {});
+                                .catch((err) => {
+                                    console.log(err);
+                                });
+                        } else {
+                            alert("Please enter a username and password.");
                         }
                     }}
                 >

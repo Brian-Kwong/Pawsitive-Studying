@@ -3,13 +3,14 @@ import { styles, textStyles } from "../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { makeNewUser } from "./security.js";
 
 export default function Signup() {
     const [user, setUser] = useState({
         name: "",
         pronouns: "",
+        email: "",
         username: "",
         password: "",
     });
@@ -43,45 +44,134 @@ export default function Signup() {
                     }}
                     source="https://i.pinimg.com/564x/34/c3/33/34c3332cb8eb6c448bb4544cd7df4bcd.jpg"
                     contentFit="cover"
-                ></Image>
+                />
             </View>
+            <TextInput
+                style={styles.TextInput}
+                placeholder="Name"
+                onEndEditing={(event) =>
+                    setUser({
+                        name: event.nativeEvent.text,
+                        pronouns: user.pronouns,
+                        username: user.username,
+                        email: user.email,
+                        password: user.password,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        name: event.nativeEvent.text,
+                        pronouns: user.pronouns,
+                        username: user.username,
+                        email: user.email,
+                        password: user.password,
+                    })
+                }
+            />
+            <TextInput
+                style={styles.TextInput}
+                placeholder="Pronouns"
+                onEndEditing={(event) =>
+                    setUser({
+                        name: user.name,
+                        pronouns: event.nativeEvent.text,
+                        username: user.username,
+                        email: user.email,
+                        password: user.password,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        name: user.name,
+                        pronouns: event.nativeEvent.text,
+                        username: user.username,
+                        email: user.email,
+                        password: user.password,
+                    })
+                }
+            />
             <TextInput
                 style={styles.TextInput}
                 placeholder="Username"
                 onEndEditing={(event) =>
-                    (user.username = event.nativeEvent.text)
+                    setUser({
+                        name: user.name,
+                        pronouns: user.pronouns,
+                        username: event.nativeEvent.text,
+                        email: user.email,
+                        password: user.password,
+                    })
                 }
                 onSubmitEditing={(event) =>
-                    (user.username = event.nativeEvent.text)
+                    setUser({
+                        name: user.name,
+                        pronouns: user.pronouns,
+                        username: event.nativeEvent.text,
+                        email: user.email,
+                        password: user.password,
+                    })
                 }
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder="Email"
-                autoComplete="email"
-                onEndEditing={(event) => (user.email = event.nativeEvent.text)}
+                onEndEditing={(event) =>
+                    setUser({
+                        name: user.name,
+                        pronouns: user.pronouns,
+                        username: user.username,
+                        email: event.nativeEvent.text,
+                        password: user.password,
+                    })
+                }
                 onSubmitEditing={(event) =>
-                    (user.email = event.nativeEvent.text)
+                    setUser({
+                        name: user.name,
+                        pronouns: event.nativeEvent.text,
+                        username: user.username,
+                        email: event.nativeEvent.text,
+                        password: user.password,
+                    })
                 }
             />
             <TextInput
                 style={styles.TextInput}
-                placeholder="Password"
-                autoComplete="new-password"
-                onEndEditing={(event) =>
-                    (user.password = event.nativeEvent.text)
-                }
-                onSubmitEditing={(event) =>
-                    (user.password = event.nativeEvent.text)
-                }
+                placeholder="Password (8+ characters)"
+                onEndEditing={(event) => {
+                    if (event.nativeEvent.text.length < 8) {
+                        alert("Password must be at least 8 characters long");
+                    } else {
+                        setUser({
+                            name: user.name,
+                            pronouns: user.pronouns,
+                            username: user.username,
+                            email: user.email,
+                            password: event.nativeEvent.text,
+                        });
+                    }
+                }}
+                onSubmitEditing={(event) => {
+                    if (event.nativeEvent.text.length < 8) {
+                        alert("Password must be at least 8 characters long");
+                    } else {
+                        setUser({
+                            name: user.name,
+                            pronouns: user.pronouns,
+                            username: user.username,
+                            email: user.email,
+                            password: event.nativeEvent.text,
+                        });
+                    }
+                }}
             />
             <TouchableOpacity
                 style={styles.Button}
                 onPress={() => {
                     if (
-                        user.email != "" &&
-                        user.name != "" &&
-                        user.password != ""
+                        user.email !== "" &&
+                        user.name !== "" &&
+                        user.password !== "" &&
+                        user.username !== ""
                     ) {
                         makeNewUser(user)
                             .then((res) => {
@@ -93,7 +183,9 @@ export default function Signup() {
                                     return;
                                 }
                             })
-                            .catch(() => {});
+                            .catch((err) => {
+                                console.log(err);
+                            });
                     } else {
                         alert("Please fill all fields before signing up :D");
                     }
