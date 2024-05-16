@@ -37,7 +37,11 @@ app.post('/login', loginUser);
             returns user token */
 app.get("/users", (req, res) => {
     // generate the user token, do I import?
-    return loginUser(req, res);
+    // 200 Get request for successful retrieval
+    if (loginUser(req, res) === 200) {
+        console.log("Success retrieve")
+    }
+    else {console.log("Get did not work")};
 })
 
 // POST <server>/user new user to db
