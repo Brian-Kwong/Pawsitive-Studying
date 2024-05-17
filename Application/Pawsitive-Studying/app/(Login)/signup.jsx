@@ -1,4 +1,10 @@
-import { View, TextInput, TouchableOpacity, Text } from "react-native";
+import {
+    View,
+    TextInput,
+    TouchableOpacity,
+    Text,
+    ScrollView,
+} from "react-native";
 import { styles, textStyles } from "../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
@@ -26,7 +32,7 @@ export default function Signup() {
     }, [navigation]);
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View
                 style={{
                     width: "30%",
@@ -194,6 +200,6 @@ export default function Signup() {
                 <Text style={textStyles.textBody}>Signup</Text>
             </TouchableOpacity>
             <StatusBar style="auto" />
-        </View>
+        </ScrollView>
     );
 }
