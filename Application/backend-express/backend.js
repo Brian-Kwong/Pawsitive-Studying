@@ -73,23 +73,8 @@ app.post("/users", (req, res) => {
     });
 });
 
-//get all users
-app.get("/users", authenticateUser, async (req, res) => {
-    getUsers()
-        .then((users) => {
-            res.status(200).send(users);
-        })
-        .catch(() => {
-            res.status(500).send("Internal Server Error");
-        });
-});
-
 app.get("/users/:id/tasks", authenticateUser, getUserTasks);
 app.post("/users/:id/task", authenticateUser, addUserTask);
-
-app.listen(port, () => {
-    console.log(`app listening at http://localhost:${port}`);
-});
 
 app.get("/user", (req, res) => {
     const { username, email } = req.query;
@@ -119,4 +104,8 @@ app.get("/user/:id", (req, res) => {
             console.error("Error fetching user:", error);
             res.status(500).json({ error: "Internal server error" });
         });
+});
+
+app.listen(port, () => {
+    console.log(`app listening at http://localhost:${port}`);
 });
