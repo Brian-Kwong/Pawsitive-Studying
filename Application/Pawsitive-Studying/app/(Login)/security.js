@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 
-const loginURL = "http://10.151.71.149:3000/users/"; // Change to your server's IP address
+const loginURL = "http://10.144.207.193:3000/users/"; // Change to your server's IP address
 // I use my Mac's IP address to test the server on my phone
 
 // Fetches login request from server
@@ -12,38 +12,56 @@ function login(username, password) {
     });
 }
 
+function savePassword(password) {
+    return new Promise((resolve, reject) => {
+        if (SecureStore.canUseBiometricAuthentication()) {
+            SecureStore.setItemAsync("Password", password, {
+                requireAuthentication: true,
+                authenticationPrompt:
+                    "2FA : Authenticate to store password for future logins",
+            })
+                .then(() => {
+                    resolve(200);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        } else {
+            return resolve(200);
+        }
+    });
+}
+
 // This function logs in a user with a username and password
 export function logInWithPassword(user) {
     return new Promise((resolve, reject) => {
         login(user.username, user.password)
             .then((response) => {
                 SecureStore.setItemAsync("Username", user.username).then(() => {
-                    SecureStore.setItemAsync("Password", user.password).then(
-                        () => {
-                            if (response.status === 200) {
-                                response.json().then((data) => {
-                                    if (data != null) {
-                                        SecureStore.setItemAsync(
-                                            "Token",
-                                            data.token
-                                        )
-                                            .then(() => {
-                                                resolve(200);
-                                            })
-                                            .catch((err) => {
-                                                alert(
-                                                    "Failed to store login Try restarting the app."
-                                                );
-                                                reject(err);
-                                            });
-                                    }
-                                });
-                            } else {
-                                alert("Server failed to authenticate account");
-                                reject(401);
-                            }
+                    savePassword(user.password).then(() => {
+                        if (response.status === 200) {
+                            response.json().then((data) => {
+                                if (data != null) {
+                                    SecureStore.setItemAsync(
+                                        "Token",
+                                        data.token
+                                    )
+                                        .then(() => {
+                                            resolve(200);
+                                        })
+                                        .catch((err) => {
+                                            alert(
+                                                "Failed to store login Try restarting the app."
+                                            );
+                                            reject(err);
+                                        });
+                                }
+                            });
+                        } else {
+                            alert("Server failed to authenticate account");
+                            reject(401);
                         }
-                    );
+                    });
                 });
             })
             .catch((err) => {
@@ -55,84 +73,82 @@ export function logInWithPassword(user) {
 // This function logs in a user with FaceID
 export function logInWithFaceID() {
     return new Promise((resolve, reject) => {
-        LocalAuthentication.authenticateAsync({ disableDeviceFallback: false })
-            .then((result) => {
-                if (result.success) {
-                    SecureStore.getItemAsync("Username").then((username) => {
-                        if (username != null) {
-                            SecureStore.getItemAsync("Password").then(
-                                (password) => {
-                                    if (password != null) {
-                                        login(username, password)
-                                            .then((response) => {
-                                                if (response.status === 200) {
-                                                    response
-                                                        .json()
-                                                        .then((data) => {
-                                                            if (data != null) {
-                                                                SecureStore.setItemAsync(
-                                                                    "Token",
-                                                                    data.token
-                                                                )
-                                                                    .then(
-                                                                        () => {
-                                                                            resolve(
-                                                                                200
-                                                                            );
-                                                                        }
-                                                                    )
-                                                                    .catch(
-                                                                        () => {
-                                                                            // Failed to store token cant continue...
-                                                                            alert(
-                                                                                "Failed to store login Try restarting the app."
-                                                                            );
-                                                                            reject(
-                                                                                400
-                                                                            );
-                                                                        }
-                                                                    );
-                                                            }
-                                                        });
-                                                } else {
-                                                    alert(
-                                                        // Cant find user
-                                                        "Server failed to authenticate account"
-                                                    );
-                                                    reject(401);
-                                                }
-                                            })
-
-                                            .catch((err) => {
+        if (SecureStore.canUseBiometricAuthentication()) {
+            SecureStore.getItemAsync("Username")
+                .then((username) => {
+                    if (username != null) {
+                        SecureStore.getItemAsync("Password", {
+                            requireAuthentication: true,
+                            authenticationPrompt:
+                                "Authenticate to login with FaceID",
+                        })
+                            .then((password) => {
+                                if (password != null) {
+                                    login(username, password)
+                                        .then((response) => {
+                                            if (response.status === 200) {
+                                                response.json().then((data) => {
+                                                    if (data != null) {
+                                                        SecureStore.setItemAsync(
+                                                            "Token",
+                                                            data.token
+                                                        )
+                                                            .then(() => {
+                                                                resolve(200);
+                                                            })
+                                                            .catch(() => {
+                                                                // Failed to store token cant continue...
+                                                                alert(
+                                                                    "Failed to store login Try restarting the app."
+                                                                );
+                                                                reject(400);
+                                                            });
+                                                    }
+                                                });
+                                            } else {
                                                 alert(
-                                                    // User not found
-                                                    `Server failed to authenticate account ${err}`
+                                                    // Cant find user
+                                                    "Server failed to authenticate account"
                                                 );
-                                                reject(err);
-                                            });
-                                    } else {
-                                        alert(
-                                            // Cant find previous user
-                                            "No password stored You will need to login through username and password first."
-                                        );
-                                        reject(401);
-                                    }
+                                                reject(401);
+                                            }
+                                        })
+
+                                        .catch((err) => {
+                                            alert(
+                                                // User not found
+                                                `Server failed to authenticate account ${err}`
+                                            );
+                                            reject(err);
+                                        });
+                                } else {
+                                    alert(
+                                        // Cant find previous user
+                                        "No password stored You will need to login through username and password first."
+                                    );
+                                    reject(401);
                                 }
-                            );
-                        } else {
-                            alert(
-                                // Cant find previous user                                        // Cant find previous user
-                                "No username stored You will need to login through username and password first."
-                            );
-                            reject(401);
-                        }
-                    });
-                }
-            })
-            .catch(() => {
-                alert("Failed to authenticate with FaceID ");
-                reject(500);
-            });
+                            })
+                            .catch(() => {
+                                reject(401);
+                            });
+                    } else {
+                        alert(
+                            // Cant find previous user                                        // Cant find previous user
+                            "No username stored You will need to login through username and password first."
+                        );
+                        reject(401);
+                    }
+                })
+                .catch(() => {
+                    reject(401);
+                });
+        } else {
+            alert(
+                "Cannot use FaceID login with this device. Maybe you are using Expo Go? FaceID is not supported in Expo Go."
+            );
+            reject(500);
+        }
     });
 }
 

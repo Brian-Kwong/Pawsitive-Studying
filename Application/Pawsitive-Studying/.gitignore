@@ -9,9 +9,8 @@ node_modules/
 dist/
 web-build/
 
-./ios
-./android
-./dist
+ios
+dist
 
 # Native
 *.orig.*

@@ -63,6 +63,9 @@ export default function Welcome() {
                 style={styles.TextInput}
                 placeholder="Password"
                 autoComplete="password"
+                blurOnSubmit={true}
+                blurOEnter={true}
+                secureTextEntry={true}
                 onEndEditing={(event) =>
                     setUser({
                         username: user.username,
@@ -75,7 +78,6 @@ export default function Welcome() {
                         password: event.nativeEvent.text,
                     })
                 }
-                blurOnSubmit={true}
             />
             <View style={styles.horzContainer}>
                 <TouchableOpacity
