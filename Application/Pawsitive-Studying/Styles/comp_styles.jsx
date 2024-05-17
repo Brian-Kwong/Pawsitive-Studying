@@ -30,6 +30,7 @@ export const styles = StyleSheet.create({
         backgroundColor: "#F0F5FA",
         alignItems: "center",
         justifyContent: "center",
+        margin: "10% 10% 10% 10%",
     },
     topContainer: {
         flex: 1,
@@ -42,6 +43,7 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
+        margin: "5% 5% 5% 5%",
     },
     TextInput: {
         backgroundColor: "#F0F5FA",

@@ -11,6 +11,7 @@ web-build/
 
 ./ios
 ./android
+./dist
 
 # Native
 *.orig.*
