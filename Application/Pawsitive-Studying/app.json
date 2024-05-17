@@ -5,7 +5,7 @@
         "scheme": "pawsitive-studying",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./assets/icon.png",
+        "icon": "./assets/app_icon.png",
         "userInterfaceStyle": "light",
         "splash": {
             "image": "./assets/splash.png",
@@ -56,6 +56,12 @@
             "eas": {
                 "projectId": "ce146776-232f-424a-8d19-b46fdad3e202"
             }
+        },
+        "runtimeVersion": {
+            "policy": "appVersion"
+        },
+        "updates": {
+            "url": "https://u.expo.dev/ce146776-232f-424a-8d19-b46fdad3e202"
         }
     }
 }
