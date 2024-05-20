@@ -2,7 +2,7 @@ name: expo-full-build
 on:
     push:
         branches:
-            - main
+            - user-auth-after-to-main
 jobs:
     build:
         runs-on: macos-latest
