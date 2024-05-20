@@ -1,8 +1,8 @@
-name: expo-full-build
+name: Discord Bot
 on:
     push:
         branches:
-            - main
+            - user-auth-after-to-main
 jobs:
   build:
     name: Build
