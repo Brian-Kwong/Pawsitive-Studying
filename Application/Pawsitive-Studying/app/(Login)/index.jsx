@@ -1,24 +1,32 @@
-import {
-    View,
-    TextInput,
-    TouchableOpacity,
-    Text,
-    Pressable,
-} from 'react-native'
-import { styles, textStyles } from '../../Styles/comp_styles.jsx'
-import { StatusBar } from 'expo-status-bar'
-import { Image } from 'expo-image'
-import { router } from 'expo-router'
+import { View, TextInput, TouchableOpacity, Text, Alert } from "react-native";
+import { styles, textStyles } from "../../Styles/comp_styles.jsx";
+import { StatusBar } from "expo-status-bar";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { useState } from "react";
+import { logInWithFaceID, logInWithPassword } from "./security.js";
+import * as SecureStore from "expo-secure-store";
 
 export default function Welcome() {
-    var userName = null
-    var password = null
+    /* Checks if they are logged in */
+    SecureStore.getItemAsync("Token").then((token) => {
+        if (token != null) {
+            router.replace({
+                pathname: "../(Main-App)/(Tabs)",
+            });
+        }
+    });
+
+    const [user, setUser] = useState({
+        username: "",
+        password: "",
+    });
 
     return (
         <View style={styles.container}>
             <View
                 style={{
-                    width: '30%',
+                    width: "30%",
                     aspectRatio: 1 / 1,
                     marginBottom: 20,
                     marginTop: 20,
@@ -26,49 +34,93 @@ export default function Welcome() {
             >
                 <Image
                     style={{
-                        resizeMode: 'stretch',
-                        height: '100%',
-                        width: '100%',
+                        resizeMode: "stretch",
+                        height: "100%",
+                        width: "100%",
                         borderRadius: 360,
                     }}
                     source="https://i.pinimg.com/564x/34/c3/33/34c3332cb8eb6c448bb4544cd7df4bcd.jpg"
                     contentFit="cover"
-                ></Image>
+                />
             </View>
             <TextInput
                 style={styles.TextInput}
                 placeholder="Username"
-                onEndEditing={(event) => (userName = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (userName = event.nativeEvent.text)}
+                onEndEditing={(event) =>
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: user.password,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        username: event.nativeEvent.text,
+                        password: user.password,
+                    })
+                }
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder="Password"
-                autoComplete="new-password"
-                onEndEditing={(event) => (password = event.nativeEvent.text)}
-                onSubmitEditing={(event) => (password = event.nativeEvent.text)}
+                autoComplete="password"
                 blurOnSubmit={true}
+                blurOEnter={true}
+                secureTextEntry={true}
+                onEndEditing={(event) =>
+                    setUser({
+                        username: user.username,
+                        password: event.nativeEvent.text,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        username: user.username,
+                        password: event.nativeEvent.text,
+                    })
+                }
             />
-            <TouchableOpacity
-                style={styles.Button}
-                onPress={() => {
-                    if (userName && password) {
-                        router.replace({
-                            pathname: '../(Main-App)/(Tabs)',
-                        })
-                    } else {
-                        alert('Please fill all fields before signing up :D')
-                    }
-                }}
-            >
-                <Text style={textStyles.textBody}>Login</Text>
-            </TouchableOpacity>
+            <View style={styles.horzContainer}>
+                <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => {
+                        if (user.username !== "" && user.password !== "") {
+                            logInWithPassword(user)
+                                .then(() => {
+                                    router.replace({
+                                        pathname: "../(Main-App)/(Tabs)",
+                                    });
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                });
+                        } else {
+                            alert("Please enter a username and password.");
+                        }
+                    }}
+                >
+                    <Text style={textStyles.textBody}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => {
+                        logInWithFaceID()
+                            .then(() => {
+                                router.replace({
+                                    pathname: "../(Main-App)/(Tabs)",
+                                });
+                            })
+                            .catch(() => {});
+                    }}
+                >
+                    <Text style={textStyles.textBody}>Login with FaceID </Text>
+                </TouchableOpacity>
+            </View>
             <View style={styles.horzContainer}>
                 <TouchableOpacity
                     style={styles.textButton}
                     onPress={() =>
                         router.push({
-                            pathname: '/signup',
+                            pathname: "/signup",
                         })
                     }
                 >
@@ -81,5 +133,5 @@ export default function Welcome() {
             </View>
             <StatusBar style="auto" />
         </View>
-    )
+    );
 }

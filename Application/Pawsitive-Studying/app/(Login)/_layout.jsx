@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router/stack'
+import { Stack } from "expo-router/stack";
 
 export default function Layout() {
     return (
@@ -6,5 +6,5 @@ export default function Layout() {
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="signup" />
         </Stack>
-    )
+    );
 }
