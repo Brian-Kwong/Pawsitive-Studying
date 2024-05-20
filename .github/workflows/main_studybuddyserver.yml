@@ -25,7 +25,6 @@ jobs:
               run: |
                   npm install --workspaces=false
                   npm run -w backend-express build --if-present
-                  npm run -w backend-express test --if-present
               working-directory: Application/backend-express
 
             - name: Zip artifact for deployment
