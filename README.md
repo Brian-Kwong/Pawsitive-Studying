@@ -58,3 +58,9 @@ Accept any permission prompts that may arise from either the computer or device.
 
 If all goes well it should open up in ExpoGo and load your app[^3].
 [^3]: On first boot it may take a bit to download the code onto the device
+
+## Database Schema :
+For this project, we went with a document-based database system, in the form of MongoDB, as there are few relations, and the relations we have are either compositions or can easily be linked together using ObjectIDs.  Using a relational-based DB like MySQL would require many excess tables to maintain the schema in 3NF causing an unnecessary number of joins, anytime a user uses the app.
+With that in mind, we built the following schema for our application :
+
+![Databse ERD](./assets/ERD.png "Database ERD")
