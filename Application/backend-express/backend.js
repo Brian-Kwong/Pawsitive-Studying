@@ -12,6 +12,7 @@ import {
     getUserByUsernameOrEmail,
     getUserById,
 } from "./auth.js";
+import serverless from "serverless-http";
 dotenv.config();
 
 const app = express();
@@ -106,6 +107,15 @@ app.get("/user/:id", (req, res) => {
         });
 });
 
-app.listen(port, () => {
-    console.log(`REST API  is listening at ${port}`);
-});
+const server = async () =>
+    app.listen(port, () => {
+        console.log(`REST API  is listening at ${port}`);
+    });
+
+server();
+
+const handler = serverless(app);
+export async function handleStart(context, req) {
+    const res = await handler(context, req);
+    return res;
+}
