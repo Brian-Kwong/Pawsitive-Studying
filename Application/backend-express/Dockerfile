@@ -1,3 +1,4 @@
+# Gets base image from AWS ECR
 FROM public.ecr.aws/lambda/nodejs:20
 #installing the dependencies
 COPY package*.json ./
