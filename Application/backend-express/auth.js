@@ -36,7 +36,6 @@ export async function registerUser(req, res) {
         profileImage,
         tasks,
         characters,
-        playlists,
         passwordResetToken,
     } = req.body;
 
@@ -66,7 +65,6 @@ export async function registerUser(req, res) {
             profileImage,
             tasks,
             characters,
-            playlists,
             passwordResetToken,
         });
 
