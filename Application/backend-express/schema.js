@@ -124,15 +124,43 @@ const playlistSchema = new mongoose.Schema(
         },
         songs: [
             {
-                type: Schema.Types.ObjectId,
-                ref: "Songs",
+                name: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+                length: {
+                    type: Number,
+                    required: true,
+                },
+                artist: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+                artistCoverURL: {
+                    type: String,
+                    required: false,
+                    trim: true,
+                },
+                songURL: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+                soundCloudURL: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
             },
         ],
-        }
+    },
     { collation: "Playlists" }
 );
 
 const User = mongoose.model("User", userSchema);
 const Character = mongoose.model("Characters", charactersSchema);
+const Playlist = mongoose.model("Playlists", playlistSchema);
 
-export { User, Character };
+export { User, Character, Playlist };
