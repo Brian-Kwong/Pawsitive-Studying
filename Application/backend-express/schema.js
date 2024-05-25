@@ -72,6 +72,12 @@ const userSchema = new mongoose.Schema(
                 ref: "Characters",
             },
         ],
+        passwordResetToken: [
+            {
+                type: Number,
+                required: false,
+            },
+        ],
     },
     { collection: "Users" }
 );
@@ -118,13 +124,13 @@ const playlistSchema = new mongoose.Schema(
             required: true,
             default: 0,
         },
-        creater: {
+        creator: {
             type: Schema.Types.ObjectId,
             ref: "Users",
         },
         songs: [
             {
-                name: {
+                songName: {
                     type: String,
                     required: true,
                     trim: true,
@@ -142,6 +148,7 @@ const playlistSchema = new mongoose.Schema(
                     type: String,
                     required: false,
                     trim: true,
+                    default: "None",
                 },
                 songURL: {
                     type: String,
@@ -156,7 +163,7 @@ const playlistSchema = new mongoose.Schema(
             },
         ],
     },
-    { collation: "Playlists" }
+    { collection: "Playlists" }
 );
 
 const User = mongoose.model("User", userSchema);

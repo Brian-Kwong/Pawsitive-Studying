@@ -13,6 +13,12 @@ import {
     getUserById,
 } from "./auth.js";
 import serverless from "serverless-http";
+import {
+    addPlaylist,
+    getPlaylist,
+    addSong,
+    fetchSongFromSoundCloud,
+} from "./music.js";
 dotenv.config();
 
 const app = express();
@@ -48,7 +54,7 @@ mongoose
 /* GET <server>/login/user?username=
                     <username>password=<password>
             returns user token */
-app.get("/users/:username/:password", (req, res) => {
+app.get("/login/:username/:password", (req, res) => {
     // generate the user token, do I import?
     // 200 Get request for successful retrieval
     return loginUser(req, res)
@@ -57,7 +63,7 @@ app.get("/users/:username/:password", (req, res) => {
 });
 
 // POST <server>/user new user to db
-app.post("/users", (req, res) => {
+app.post("/signup", (req, res) => {
     const username = req.query.username;
     // Check if username already exists
     conflictUser(username).then((conflict) => {
@@ -106,6 +112,11 @@ app.get("/user/:id", (req, res) => {
             res.status(500).json({ error: "Internal server error" });
         });
 });
+
+app.get("/users/:id/playlists", authenticateUser, getPlaylist);
+app.post("/users/:id/playlist", authenticateUser, addPlaylist);
+app.post("/users/:id/:playlistId/song", authenticateUser, addSong);
+app.get("/searchSong", authenticateUser, fetchSongFromSoundCloud);
 
 // Binds socket to port
 const server = async () =>
