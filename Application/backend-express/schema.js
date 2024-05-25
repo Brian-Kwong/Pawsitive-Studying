@@ -101,6 +101,37 @@ const charactersSchema = new mongoose.Schema(
     { collection: "Characters" }
 );
 
+const playlistSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        description: {
+            type: String,
+            trim: true,
+            default: "None",
+        },
+        numberOfSongs: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
+        creater: {
+            type: Schema.Types.ObjectId,
+            ref: "Users",
+        },
+        songs: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Songs",
+            },
+        ],
+        }
+    { collation: "Playlists" }
+);
+
 const User = mongoose.model("User", userSchema);
 const Character = mongoose.model("Characters", charactersSchema);
 
