@@ -105,7 +105,7 @@ export async function addSong(req, res) {
             // Updates the user's playlists list on the DB
             playlistId,
             {
-                songs: playlistSongs,
+                songs: playlistSongs.songs,
                 numberOfSongs: playlistSize.numberOfSongs + 1,
             },
             { new: true }
@@ -159,4 +159,44 @@ export async function fetchSongFromSoundCloud(req, res) {
         .catch((error) => {
             res.status(500).send("Internal server error");
         });
+}
+
+// Returns the streaming URL of the song
+export async function getStreamURL(req, res) {
+    const songId = req.params.songId;
+    try {
+        let song = await Playlist.findOne({ "songs._id": songId }); // gets the song from the database
+        song = song.songs;
+        song = song.find((s) => s._id.toString() === songId);
+        if (song !== null) {
+            const fetchStreamURL = fetch(song.songURL, {
+                // fetches the song from the URL
+                method: "GET",
+                headers: {
+                    Authorization: `OAuth ${soundCloudAPIKey}`,
+                },
+            });
+            fetchStreamURL.then((response) => {
+                // Gets the response
+                // Returns streaming link
+                if (response.status === 200) {
+                    // Response good?
+                    response.json().then((data) => {
+                        if (data !== null) {
+                            // Data good?
+                            res.status(200).json(data);
+                        } else {
+                            res.status(404).send("Song not found");
+                        }
+                    });
+                } else {
+                    res.status(404).send("Song not found");
+                }
+            });
+        } else {
+            res.status(500).send("Internal server error");
+        }
+    } catch (error) {
+        res.status(400).send("Bad request: Invalid input data.");
+    }
 }

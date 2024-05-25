@@ -148,7 +148,6 @@ const playlistSchema = new mongoose.Schema(
                     type: String,
                     required: false,
                     trim: true,
-                    default: "None",
                 },
                 songURL: {
                     type: String,
