@@ -3,6 +3,49 @@ import * as LocalAuthentication from "expo-local-authentication";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
+export async function getID() {
+    return await SecureStore.getItemAsync("user_id")
+        .then((id) => {
+            if (id != null) {
+                return id;
+            } else {
+                return null;
+            }
+        })
+        .catch(() => {
+            return null;
+        });
+}
+
+function saveID(username, token) {
+    let idURL = baseURL + "user";
+    return new Promise((resolve, reject) => {
+        fetch(idURL + `?username=${username}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    response.json().then((data) => {
+                        SecureStore.setItemAsync("user_id", data._id).then(
+                            () => {
+                                resolve(200);
+                            }
+                        );
+                    });
+                } else {
+                    reject(response.status);
+                }
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    });
+}
+
 // Fetches login request from server
 function login(username, password) {
     const loginURL = baseURL + "login";
@@ -58,7 +101,16 @@ export function logInWithPassword(user) {
                                         data.token
                                     )
                                         .then(() => {
-                                            resolve(200);
+                                            saveID(user.username, data.token)
+                                                .then(() => {
+                                                    resolve(200);
+                                                })
+                                                .catch((err) => {
+                                                    alert(
+                                                        "Failed to store user id Try restarting the app."
+                                                    );
+                                                    reject(err);
+                                                });
                                         })
                                         .catch((err) => {
                                             alert(
@@ -105,7 +157,29 @@ export function logInWithFaceID() {
                                                             data.token
                                                         )
                                                             .then(() => {
-                                                                resolve(200);
+                                                                saveID(
+                                                                    username,
+                                                                    data.token
+                                                                )
+                                                                    .then(
+                                                                        () => {
+                                                                            resolve(
+                                                                                200
+                                                                            );
+                                                                        }
+                                                                    )
+                                                                    .catch(
+                                                                        (
+                                                                            err
+                                                                        ) => {
+                                                                            alert(
+                                                                                "Failed to store user id Try restarting the app."
+                                                                            );
+                                                                            reject(
+                                                                                err
+                                                                            );
+                                                                        }
+                                                                    );
                                                             })
                                                             .catch(() => {
                                                                 // Failed to store token cant continue...
@@ -193,7 +267,16 @@ export function makeNewUser(user) {
                                 // Store the token
                                 SecureStore.setItemAsync("Token", data.token)
                                     .then(() => {
-                                        resolve(200);
+                                        saveID(user.username, data.token)
+                                            .then(() => {
+                                                resolve(200);
+                                            })
+                                            .catch((err) => {
+                                                alert(
+                                                    "Failed to store user id Try restarting the app."
+                                                );
+                                                reject(err);
+                                            });
                                     })
                                     .catch(
                                         // Failed to store token

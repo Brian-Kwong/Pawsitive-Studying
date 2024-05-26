@@ -10,8 +10,8 @@ const gotoTimer = (time) => {
     router.push({
         pathname: `../Timer/timer_page`,
         params: { time: time },
-    })
-}
+    });
+};
 
 export default function Home() {
     const [tasks, setTasks] = useState([
