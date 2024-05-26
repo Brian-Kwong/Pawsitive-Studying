@@ -72,6 +72,12 @@ const userSchema = new mongoose.Schema(
                 ref: "Characters",
             },
         ],
+        passwordResetToken: [
+            {
+                type: Number,
+                required: false,
+            },
+        ],
     },
     { collection: "Users" }
 );
@@ -101,7 +107,66 @@ const charactersSchema = new mongoose.Schema(
     { collection: "Characters" }
 );
 
+const playlistSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        description: {
+            type: String,
+            trim: true,
+            default: "None",
+        },
+        numberOfSongs: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
+        creator: {
+            type: Schema.Types.ObjectId,
+            ref: "Users",
+        },
+        songs: [
+            {
+                songName: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+                length: {
+                    type: Number,
+                    required: true,
+                },
+                artist: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+                artistCoverURL: {
+                    type: String,
+                    required: false,
+                    trim: true,
+                },
+                songURL: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+                soundCloudURL: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                },
+            },
+        ],
+    },
+    { collection: "Playlists" }
+);
+
 const User = mongoose.model("User", userSchema);
 const Character = mongoose.model("Characters", charactersSchema);
+const Playlist = mongoose.model("Playlists", playlistSchema);
 
-export { User, Character };
+export { User, Character, Playlist };

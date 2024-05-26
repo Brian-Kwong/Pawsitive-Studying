@@ -12,6 +12,15 @@ import {
     getUserByUsernameOrEmail,
     getUserById,
 } from "./auth.js";
+import serverless from "serverless-http";
+import {
+    addPlaylist,
+    getPlaylist,
+    addSong,
+    fetchSongFromSoundCloud,
+    getStreamURL,
+    findSong,
+} from "./music.js";
 dotenv.config();
 
 const app = express();
@@ -47,31 +56,10 @@ mongoose
 /* GET <server>/login/user?username=
                     <username>password=<password>
             returns user token */
-app.get("/users/:username/:password", (req, res) => {
-    // generate the user token, do I import?
-    // 200 Get request for successful retrieval
-    return loginUser(req, res)
-        .then(() => {})
-        .catch(() => {}); //Error handling done in async function
-});
+app.post("/login", loginUser);
 
 // POST <server>/user new user to db
-app.post("/users", (req, res) => {
-    const username = req.query.username;
-    // Check if username already exists
-    conflictUser(username).then((conflict) => {
-        // Return 409 if username already exists
-        if (conflict) {
-            return res.status(409).send("Username already taken");
-        }
-        // Call register user if not exists
-        else {
-            registerUser(req, res)
-                .then(() => {})
-                .catch(() => {}); //Error handling done in async function
-        }
-    });
-});
+app.post("/signup", registerUser);
 
 app.get("/users/:id/tasks", authenticateUser, getUserTasks);
 app.post("/users/:id/task", authenticateUser, addUserTask);
@@ -106,6 +94,25 @@ app.get("/user/:id", (req, res) => {
         });
 });
 
-app.listen(port, () => {
-    console.log(`REST API  is listening at ${port}`);
-});
+app.get("/users/:id/playlists", authenticateUser, getPlaylist);
+app.post("/users/:id/playlist", authenticateUser, addPlaylist);
+app.post("/users/:id/:playlistId/song", authenticateUser, addSong);
+app.get("/searchSong", authenticateUser, fetchSongFromSoundCloud);
+app.get("/song/:id", authenticateUser, findSong);
+app.get("/songs/stream/:songId", authenticateUser, getStreamURL);
+
+// Binds socket to port
+const server = async () =>
+    app.listen(port, () => {
+        console.log(`REST API  is listening at ${port}`);
+    });
+
+// Starts server
+server();
+
+// Lambda handler
+const handler = serverless(app);
+export async function handleStart(context, req) {
+    const res = await handler(context, req);
+    return res;
+}
