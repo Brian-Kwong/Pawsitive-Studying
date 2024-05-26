@@ -19,6 +19,7 @@ import {
     addSong,
     fetchSongFromSoundCloud,
     getStreamURL,
+    findSong,
 } from "./music.js";
 dotenv.config();
 
@@ -118,6 +119,7 @@ app.get("/users/:id/playlists", authenticateUser, getPlaylist);
 app.post("/users/:id/playlist", authenticateUser, addPlaylist);
 app.post("/users/:id/:playlistId/song", authenticateUser, addSong);
 app.get("/searchSong", authenticateUser, fetchSongFromSoundCloud);
+app.get("/song/:id", authenticateUser, findSong);
 app.get("/songs/stream/:songId", authenticateUser, getStreamURL);
 
 // Binds socket to port
