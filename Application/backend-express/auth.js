@@ -10,7 +10,6 @@ export async function conflictUser(username) {
     User.findOne({ username }).then((user) => {
         console.log(user);
         if (user === null) {
-            console.log("User does not exist");
             return false;
         }
         return true;
@@ -37,8 +36,8 @@ export async function registerUser(req, res) {
         profileImage,
         tasks,
         characters,
+        passwordResetToken,
     } = req.body;
-    console.log(req.body);
 
     if (!name || !username || !email || !password) {
         return res.status(400).send("Bad request: Invalid input data.");
@@ -66,6 +65,7 @@ export async function registerUser(req, res) {
             profileImage,
             tasks,
             characters,
+            passwordResetToken,
         });
 
         // 保存用户到数据库
