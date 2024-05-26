@@ -1,20 +1,20 @@
-import { Tabs } from 'expo-router'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { styles } from '../../../Styles/comp_styles.jsx'
-import { useNavigation } from 'expo-router'
-import { useEffect } from 'react'
+import { Tabs } from "expo-router";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { styles } from "../../../Styles/comp_styles.jsx";
+import { useNavigation } from "expo-router";
+import { useEffect } from "react";
 
-const tabBarIconColor = 'blue'
-const inactiveTabIconColor = 'black'
+const tabBarIconColor = "blue";
+const inactiveTabIconColor = "black";
 
 export default function TabLayout() {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     useEffect(() => {
-        navigation.setOptions({ showHeader: false })
-    }, [navigation])
+        navigation.setOptions({ showHeader: false });
+    }, [navigation]);
 
     return (
         <Tabs>
@@ -22,7 +22,7 @@ export default function TabLayout() {
                 name="index"
                 style={styles.TabsButton}
                 options={{
-                    title: 'Home',
+                    title: "Home",
                     tabBarActiveTintColor: tabBarIconColor,
                     tabBarInactiveTintColor: inactiveTabIconColor,
                     tabBarIcon: ({ color, size }) => (
@@ -34,7 +34,7 @@ export default function TabLayout() {
                 name="calander"
                 style={styles.TabsButton}
                 options={{
-                    title: 'Calendar',
+                    title: "Calendar",
                     tabBarActiveTintColor: tabBarIconColor,
                     tabBarInactiveTintColor: inactiveTabIconColor,
                     tabBarIcon: ({ color, size }) => (
@@ -46,7 +46,7 @@ export default function TabLayout() {
                 name="characters"
                 style={styles.TabsButton}
                 options={{
-                    title: 'Characters',
+                    title: "Characters",
                     tabBarActiveTintColor: tabBarIconColor,
                     tabBarInactiveTintColor: inactiveTabIconColor,
                     tabBarIcon: ({ color, size }) => (
@@ -62,7 +62,7 @@ export default function TabLayout() {
                 name="settings"
                 style={styles.TabsButton}
                 options={{
-                    title: 'Settings',
+                    title: "Settings",
                     tabBarActiveTintColor: tabBarIconColor,
                     tabBarInactiveTintColor: inactiveTabIconColor,
                     tabBarIcon: ({ color, size }) => (
@@ -71,5 +71,5 @@ export default function TabLayout() {
                 }}
             />
         </Tabs>
-    )
+    );
 }
