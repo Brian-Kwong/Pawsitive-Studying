@@ -1,13 +1,20 @@
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 
-const loginURL = "https://studybuddyserver.azurewebsites.net/users/"; // URL for login requests
+const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
 // Fetches login request from server
 function login(username, password) {
-    const url = loginURL + username + "/" + password;
-    return fetch(url, {
-        method: "GET",
+    const loginURL = baseURL + "login";
+    return fetch(loginURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password,
+        }),
     });
 }
 
@@ -159,7 +166,8 @@ export function logInWithFaceID() {
 export function makeNewUser(user) {
     return new Promise((resolve, reject) => {
         // Fetches signup request from server
-        fetch(loginURL, {
+        const signupURL = baseURL + "signup";
+        fetch(signupURL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
