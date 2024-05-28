@@ -106,7 +106,7 @@ export const styles = StyleSheet.create({
     modalView: {
         height: "30%",
         width: "70%",
-        backgroundColor: "white", // This is light teal
+        backgroundColor: "white", // White Background
         padding: "3% 3% 3% 3%",
         alignItems: "center",
         alignSelf: "center",
