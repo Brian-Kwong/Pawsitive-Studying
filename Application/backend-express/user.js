@@ -1,12 +1,12 @@
-import { User } from './schema.js'
+import { User } from "./schema.js";
 
 export async function getUserTasks(req, res) {
     const userId = req.params.id; // 从URL中获取用户ID
 
     try {
         // 查找指定用户ID的用户
-        const user = await User.findById(userId).select('tasks');
-        
+        const user = await User.findById(userId).select("tasks");
+
         // 如果用户不存在，返回404错误
         if (!user) {
             return res.status(404).send("User not found");
@@ -23,12 +23,14 @@ export async function getUserTasks(req, res) {
 
 export async function addUserTask(req, res) {
     const userId = req.params.id; // 从URL中获取用户ID
-    const { name, course, description, time, points } = req.body; // 从请求主体中获取任务信息
+    let { name, course, description, time, points } = req.body; // 从请求主体中获取任务信息
 
     // 验证输入
-    if (!name || !time || !points) {
+    if (!name || !time) {
         return res.status(400).send("Bad request: Invalid input data.");
     }
+
+    points = points || time * 10; // 如果未提供积分，则默认为0
 
     try {
         // 查找指定用户ID的用户
@@ -45,7 +47,7 @@ export async function addUserTask(req, res) {
             course: course || "None",
             description: description || "None",
             time,
-            points
+            points,
         };
 
         // 将新任务添加到用户的任务列表中
