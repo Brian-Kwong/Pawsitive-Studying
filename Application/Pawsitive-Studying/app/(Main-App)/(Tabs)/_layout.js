@@ -74,11 +74,31 @@ export default function TabLayout() {
                 name="MusicPage"
                 style={styles.TabsButton}
                 options={{
-                    title: 'Music',
+                    title: "Music",
                     tabBarActiveTintColor: tabBarIconColor,
                     tabBarInactiveTintColor: inactiveTabIconColor,
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="musical-notes" size={size} color={color} />
+                        <Ionicons
+                            name="musical-notes"
+                            size={size}
+                            color={color}
+                        />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="timerSelection"
+                style={styles.TabsButton}
+                options={{
+                    title: "Timer Selection",
+                    tabBarActiveTintColor: tabBarIconColor,
+                    tabBarInactiveTintColor: inactiveTabIconColor,
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons
+                            name="musical-notes"
+                            size={size}
+                            color={color}
+                        />
                     ),
                 }}
             />
