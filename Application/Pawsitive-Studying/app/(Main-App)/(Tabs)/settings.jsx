@@ -38,6 +38,7 @@ export default function Settings() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            
                         }}
                     >
                         <Text style={styles.textBody}>
@@ -47,7 +48,7 @@ export default function Settings() {
                     <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            // Do something
+                            router.push('/manage-study-preferences');
                         }}
                     >
                         <Text style={styles.textBody}>Manage Courses</Text>
@@ -55,7 +56,7 @@ export default function Settings() {
                     <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            // Do something
+                            router.push('/manage-courses'); 
                         }}
                     >
                         <Text style={styles.textBody}>Calendar</Text>
@@ -64,6 +65,7 @@ export default function Settings() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            router.push('/calendar'); 
                         }}
                     >
                         <Text style={styles.textBody}>Music</Text>
@@ -72,6 +74,7 @@ export default function Settings() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            router.push('/music'); 
                         }}
                     >
                         <Text style={styles.textBody}>Timer</Text>
@@ -80,6 +83,7 @@ export default function Settings() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            router.push('/timer');
                         }}
                     >
                         <Text style={styles.textBody}>Settings</Text>
