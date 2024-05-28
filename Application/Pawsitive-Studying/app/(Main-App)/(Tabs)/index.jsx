@@ -25,6 +25,7 @@ const gotoTimer = (time) => {
 export default function Home() {
     
     const [modalVisible, setModalVisible] = useState(false); // Brent
+    const [inputText, setInputText] = useState('');
     return ( 
         <View style={styles.container}>
             <Modal
