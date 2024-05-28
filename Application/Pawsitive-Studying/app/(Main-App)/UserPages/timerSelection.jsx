@@ -128,13 +128,6 @@ export default function Home() {
             {/* This is outside of the modal */}
 
             {/* + Button on Home Screen */}
-            <Pressable
-                style={[styles.plusButtonContainer]}
-                onPress={() => setModalVisible(true)}
-            >
-                {/* BRIAN this is the Icon did I do this right*/}
-                <MaterialIcons name="add" color="#808080" size={20} />
-            </Pressable>
 
             <Text style={textStyles.textHeader}>Study Timer</Text>
             <View>
