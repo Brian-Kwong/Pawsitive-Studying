@@ -13,6 +13,8 @@ import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "expo-router";
 import { textStyles } from "../../../Styles/comp_styles.jsx";
 
+const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
+
 const MusicPage = () => {
     const [songRecommendation, setSongRecommendation] = useState(null);
     const [playlist, setPlaylist] = useState([]);
@@ -35,7 +37,7 @@ const MusicPage = () => {
                     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik1lb3cgTWVvdyIsImlhdCI6MTcxNjg2NTU0MiwiZXhwIjoxNzE2OTUxOTQyfQ.yxcpD0yvtaMpQRgze7XprzuIl5HURrtku-a6XvV_lQA";
                 const id = "6651bda8a81d7a3914e05f81";
                 const response = await fetch(
-                    `http://10.151.71.149:8888/users/${id}/playlists`,
+                    `${baseURL}/users/${id}/playlists`,
                     {
                         method: "GET",
                         headers: {

@@ -8,7 +8,7 @@ import {
     StyleSheet,
     FlatList,
 } from "react-native";
-import { fetchUserTasks, addUserTask } from "./requests.js";
+import { fetchUserTasks, addUserTask } from "../UserPages/requests.js";
 
 export default function Home() {
     const [tasks, setTasks] = useState([]);
