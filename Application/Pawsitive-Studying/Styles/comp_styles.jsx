@@ -108,7 +108,9 @@ export const styles = StyleSheet.create({
         width: '70%',
         backgroundColor: '#90E4C1', // This is light teal
         position: 'absolute',
-        padding: 5
+        padding: 5,
+        justifyContent: "center",
+        alignItems: "center"
     }
     // plusButtonContainer
 });
