@@ -102,4 +102,13 @@ export const styles = StyleSheet.create({
         color: "white",
         fontSize: 18,
     },
+    // Added Brent
+    modalView: {
+        height: '50%',
+        width: '70%',
+        backgroundColor: '#90E4C1', // This is light teal
+        position: 'absolute',
+        padding: 5
+    }
+    // plusButtonContainer
 });
