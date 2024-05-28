@@ -70,6 +70,18 @@ export default function TabLayout() {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="MusicPage"
+                style={styles.TabsButton}
+                options={{
+                    title: 'Music',
+                    tabBarActiveTintColor: tabBarIconColor,
+                    tabBarInactiveTintColor: inactiveTabIconColor,
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="musical-notes" size={size} color={color} />
+                    ),
+                }}
+            />
         </Tabs>
     );
 }
