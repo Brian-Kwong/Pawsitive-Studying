@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "expo-router";
+import { textStyles } from "../../../Styles/comp_styles.jsx";
 
 const MusicPage = () => {
     const [songRecommendation, setSongRecommendation] = useState(null);
@@ -17,8 +19,16 @@ const MusicPage = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
+    const navigation = useNavigation();
+
     useEffect(() => {
         // Fetch the playlist data from the backend
+        navigation.setOptions({
+            title: "Music",
+            textStyles: textStyles.textHeader,
+            headerBackTitle: "Back",
+        });
+
         const fetchPlaylist = async () => {
             try {
                 const token =

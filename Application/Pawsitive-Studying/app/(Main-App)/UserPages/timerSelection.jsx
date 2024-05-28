@@ -1,35 +1,42 @@
 import {
     TouchableOpacity,
+    StyleSheet,
     Text,
     View,
     TextInput,
     Modal,
     Pressable,
 } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // For + button
+import React, { useState } from "react"; // added brent
 import { styles, textStyles } from "../../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { getID } from "../../(Login)/security.js";
-import { useState } from "react"; // added brent
-import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // For + button
+import { useEffect } from "react";
+import { useNavigation } from "expo-router";
 
 const sec_per_min = 60;
 const gotoTimer = (time) => {
     router.push({
-        pathname: "../Timer/timer_page",
+        pathname: "/UserPages/timer_page",
         params: { time: time },
     });
 };
 
 export default function Home() {
-    const [userID, setUserID] = useState(null);
-
-    getID().then((id) => {
-        setUserID(id);
-    });
-
     const [modalVisible, setModalVisible] = useState(false); // Brent
     const [inputText, setInputText] = useState(""); // Brent
+    const [timerText, setTimerText] = useState(""); // Brent
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: "Timer Selection",
+            textStyles: textStyles.textHeader,
+            headerBackTitle: "Back",
+        });
+    }, [navigation]);
 
     return (
         <View style={styles.container}>
@@ -51,8 +58,23 @@ export default function Home() {
                             backgroundColor: "#90E4C1",
                             top: "-5%",
                             left: "0%",
+                            justifyContent: "flex-end",
+                            flexDirection: "row",
+                            alignItems: "center",
                         }}
-                    />
+                    >
+                        {/* Add Buttons Here*/}
+                        <Pressable
+                            // Close Button TOP LEFT Modal
+                            onPress={() => setModalVisible(!modalVisible)}
+                        >
+                            <MaterialIcons
+                                name="close"
+                                color="#fff"
+                                size={32}
+                            />
+                        </Pressable>
+                    </View>
                     <View
                         style={{
                             width: "100%",
@@ -62,18 +84,7 @@ export default function Home() {
                         }}
                     >
                         {/* Modal Title (Top Center) */}
-                        <Text style={styles.textBody}>Add Tasks</Text>
-                        {/* Add Buttons Here*/}
-                        <Pressable
-                            // Close Button TOP LEFT Modal
-                            onPress={() => setModalVisible(!modalVisible)}
-                        >
-                            <MaterialIcons
-                                name="close"
-                                color="#fff"
-                                size={22}
-                            />
-                        </Pressable>
+                        {/* <Text style={styles.textBody}>Add Tasks</Text>
                         <Pressable
                             // Submit Task Button (This is a check mark icon)
                             // TOP RIGHT of Modal
@@ -81,27 +92,34 @@ export default function Home() {
                             onPress={() => setModalVisible(!modalVisible)}
                         >
                             <MaterialIcons name="done" color="#fff" size={22} />
-                        </Pressable>
+                        </Pressable> */}
                         <TextInput
+                            style={styles.inputModal}
                             // Task Entry Button
                             // CENTER of Modal
                             placeholder="Enter Task"
+                            placeholderTextColor="#888"
                             onChangeText={(text) => setInputText(text)}
                             value={inputText}
                         />
                         <TextInput
                             // Set Time Duration Button
                             // BOTTOM LEFT Modal
+                            style={styles.inputModal}
                             placeholder="Enter Time"
-                            onChangeText={(text) => setInputText(text)}
-                            value={inputText}
+                            placeholderTextColor="#888"
+                            onChangeText={(text) => setTimerText(text)}
+                            value={timerText}
                         />
                         <Pressable
                             // Untimed Button BOTTOM Right Modal
                             // TODO: Change the onPress to highlight around button
-                            onPress={() => setModalVisible(!modalVisible)}
+                            onPress={() => {
+                                setModalVisible(!modalVisible);
+                                gotoTimer(timerText * sec_per_min);
+                            }}
                         >
-                            <Text style={styles.textStyle}>No Timer</Text>
+                            <Text style={styles.textStyle}>Start Timer</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -118,7 +136,7 @@ export default function Home() {
                 <MaterialIcons name="add" color="#808080" size={20} />
             </Pressable>
 
-            <Text style={textStyles.textHeader}>🐈🐈Welcome!!🐈🐈</Text>
+            <Text style={textStyles.textHeader}>Study Timer</Text>
             <View>
                 <TouchableOpacity
                     style={styles.Button}
@@ -149,6 +167,14 @@ export default function Home() {
                     <Text style={textStyles.textBody}>
                         Timer For 30 Minutes
                     </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => {
+                        setModalVisible(true);
+                    }}
+                >
+                    <Text style={textStyles.textBody}>Custom Timer</Text>
                 </TouchableOpacity>
             </View>
 
