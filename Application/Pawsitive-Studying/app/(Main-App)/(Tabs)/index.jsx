@@ -1,69 +1,243 @@
+import React, { useState, useEffect } from "react";
 import {
-    TouchableOpacity,
-    StyleSheet,
-    Text,
     View,
+    Text,
+    TouchableOpacity,
+    Modal,
     TextInput,
+    StyleSheet,
+    FlatList,
 } from "react-native";
-import { styles, textStyles } from "../../../Styles/comp_styles.jsx";
-import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
-import { getID } from "../../(Login)/security.js";
-import { useState } from "react";
-
-const sec_per_min = 60;
-const gotoTimer = (time) => {
-    router.push({
-        pathname: `../Timer/timer_page`,
-        params: { time: time },
-    });
-};
+import { fetchUserTasks, addUserTask } from "./requests.js";
 
 export default function Home() {
-    const { userID, setUserID } = useState(null);
+    const [tasks, setTasks] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [newTask, setNewTask] = useState({});
+    const [nameError, setNameError] = useState("");
+    const [timeError, setTimeError] = useState("");
 
-    getID().then((id) => {
-        console.log(id);
-        setUserID(id);
-    });
+    useEffect(() => {
+        fetchTasks();
+    }, []);
+
+    async function fetchTasks() {
+        try {
+            const userTasks = await fetchUserTasks();
+            console.log("User tasks:", userTasks);
+            setTasks(userTasks.tasks);
+        } catch (error) {
+            console.error("Error fetching user tasks:", error);
+        }
+    }
+
+    async function addTask(newTask) {
+        try {
+            const addedTask = await addUserTask(newTask);
+            console.log("New task added:", addedTask);
+            // 更新任务列表
+            fetchTasks();
+        } catch (error) {
+            console.error("Error adding task:", error);
+        }
+    }
+
+    function closeNewTaskModal() {
+        setModalVisible(false);
+        setNewTask({});
+        setNameError("");
+        setTimeError("");
+    }
+
+    const handleAddTask = () => {
+        console.log(newTask);
+        if (!newTask.name) {
+            setNameError("must full name");
+        }
+        if (!newTask.time) {
+            setTimeError("must full time");
+        }
+
+        addTask(newTask);
+        closeNewTaskModal();
+    };
+
+    const renderItem = ({ item }) => (
+        <View style={styles.task}>
+            <Text>{item.name}</Text>
+            <Text>{item.time}</Text>
+            <Text>{item.course}</Text>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
-            <Text style={textStyles.textHeader}>🐈🐈Welcome!!🐈🐈</Text>
-            <View>
-                <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => {
-                        gotoTimer(10 * sec_per_min);
-                    }}
-                >
-                    <Text style={textStyles.textBody}>
-                        Timer For 10 Minutes
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => {
-                        gotoTimer(20 * sec_per_min);
-                    }}
-                >
-                    <Text style={textStyles.textBody}>
-                        Timer For 20 Minutes
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => {
-                        gotoTimer(30 * sec_per_min);
-                    }}
-                >
-                    <Text style={textStyles.textBody}>
-                        Timer For 30 Minutes
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            <Text style={styles.heading}>Tasks</Text>
+            <FlatList
+                data={tasks}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id.toString()}
+            />
 
-            <StatusBar style="auto" />
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => setModalVisible(true)}
+            >
+                <Text style={styles.addButtonText}>Add Task</Text>
+            </TouchableOpacity>
+
+            <Modal
+                visible={modalVisible}
+                animationType="fade"
+                transparent={true}
+            >
+                <TouchableOpacity
+                    style={styles.modalBackground}
+                    activeOpacity={1}
+                    onPress={() => closeNewTaskModal()} // 点击背景关闭模态
+                >
+                    <View
+                        style={styles.modalContainer}
+                        onStartShouldSetResponder={() => true}
+                    >
+                        <Text style={styles.modalHeading}>Add New Task</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Task Name"
+                            value={newTask.name}
+                            placeholderTextColor="#888"
+                            onChangeText={(text) => {
+                                setNewTask({ ...newTask, name: text });
+                                setNameError("");
+                            }}
+                        />
+                        {nameError ? (
+                            <Text style={styles.error}>{nameError}</Text>
+                        ) : null}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Time"
+                            placeholderTextColor="#888"
+                            value={newTask.time}
+                            onChangeText={(text) => {
+                                setNewTask({ ...newTask, time: text });
+                                setTimeError("");
+                            }}
+                        />
+                        {timeError ? (
+                            <Text style={styles.error}>{timeError}</Text>
+                        ) : null}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Course(optional)"
+                            placeholderTextColor="#888"
+                            value={newTask.category}
+                            onChangeText={(text) =>
+                                setNewTask({ ...newTask, course: text })
+                            }
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Description(optional)"
+                            placeholderTextColor="#888"
+                            value={newTask.category}
+                            onChangeText={(text) =>
+                                setNewTask({ ...newTask, description: text })
+                            }
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Points(optional)"
+                            placeholderTextColor="#888"
+                            value={newTask.category}
+                            onChangeText={(text) =>
+                                setNewTask({ ...newTask, points: text })
+                            }
+                        />
+                        <TouchableOpacity
+                            style={styles.addButton}
+                            onPress={handleAddTask}
+                        >
+                            <Text style={styles.addButtonText}>Add Task</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={() => closeNewTaskModal()}
+                        >
+                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+    heading: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
+    },
+    task: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    },
+    addButton: {
+        backgroundColor: "blue",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 20,
+    },
+    addButtonText: {
+        color: "white",
+        fontWeight: "bold",
+    },
+    modalBackground: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContainer: {
+        backgroundColor: "white",
+        padding: 20,
+        borderRadius: 10,
+        width: "80%",
+    },
+    modalHeading: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 10,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "gray",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+    },
+    error: {
+        color: "red",
+        marginBottom: 10,
+    },
+    cancelButton: {
+        backgroundColor: "red",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 10,
+    },
+    cancelButtonText: {
+        color: "white",
+        fontWeight: "bold",
+    },
+});

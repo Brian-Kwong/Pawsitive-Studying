@@ -53,6 +53,13 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
     },
+    inputModal: {
+        borderWidth: 1,
+        borderColor: "gray",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+    },
     textHeader: {
         fontSize: 30,
         color: "black",
@@ -69,6 +76,8 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         margin: "5%, 5%, 5%, 5%",
         boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+        alignItems: "center",
+        justifyContent: "center",
     },
     LongButton: {
         backgroundColor: "#9CC6EF",
@@ -102,4 +111,16 @@ export const styles = StyleSheet.create({
         color: "white",
         fontSize: 18,
     },
+    // Added Brent
+    modalView: {
+        height: "30%",
+        width: "70%",
+        backgroundColor: "white", // White Background
+        padding: "3% 3% 3% 3%",
+        alignItems: "center",
+        alignSelf: "center",
+        top: "35.5%",
+        position: "absolute",
+    },
+    // plusButtonContainer
 });

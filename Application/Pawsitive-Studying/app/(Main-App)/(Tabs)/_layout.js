@@ -59,10 +59,10 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="settings"
+                name="users"
                 style={styles.TabsButton}
                 options={{
-                    title: "Settings",
+                    title: "Users",
                     tabBarActiveTintColor: tabBarIconColor,
                     tabBarInactiveTintColor: inactiveTabIconColor,
                     tabBarIcon: ({ color, size }) => (

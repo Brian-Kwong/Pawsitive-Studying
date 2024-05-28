@@ -30,7 +30,7 @@ export default function Settings() {
                         placeholder={{ blurhash }}
                         source="https://images.unsplash.com/photo-1615497001839-b0a0eac3274c?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                         contentFit="cover"
-                    ></Image>
+                    />
                 </View>
                 <Text style={styles.textHeader}>User Profile</Text>
                 <View>
@@ -47,7 +47,15 @@ export default function Settings() {
                     <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            // Do something
+                            router.push("/manage-study-preferences");
+                        }}
+                    >
+                        <Text style={styles.textBody}>Manage Courses</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.LongButton}
+                        onPress={() => {
+                            router.push("/manage-courses");
                         }}
                     >
                         <Text style={styles.textBody}>Manage Courses</Text>
@@ -56,14 +64,19 @@ export default function Settings() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            router.push("/calendar");
                         }}
                     >
-                        <Text style={styles.textBody}>Calendar</Text>
+                        <Text style={styles.textBody}>Calander</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            router.push({
+                                pathname: "../UserPages/MusicPage",
+                                title: "Music",
+                            });
                         }}
                     >
                         <Text style={styles.textBody}>Music</Text>
@@ -72,6 +85,10 @@ export default function Settings() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            router.push({
+                                pathname: "../UserPages/timerSelection",
+                                title: "Timer",
+                            });
                         }}
                     >
                         <Text style={styles.textBody}>Timer</Text>
@@ -80,6 +97,10 @@ export default function Settings() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
+                            router.push({
+                                pathname: "../UserPages/settings",
+                                title: "Settings",
+                            });
                         }}
                     >
                         <Text style={styles.textBody}>Settings</Text>
