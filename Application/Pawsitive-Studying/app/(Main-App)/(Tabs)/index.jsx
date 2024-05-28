@@ -20,10 +20,9 @@ const gotoTimer = (time) => {
 };
 
 export default function Home() {
-    const { userID, setUserID } = useState(null);
+    const [userID, setUserID] = useState(null);
 
     getID().then((id) => {
-        console.log(id);
         setUserID(id);
     });
 
