@@ -13,7 +13,7 @@ import React, {useState} from 'react'; // added brent
 import { styles, textStyles } from '../../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { router } from 'expo-router'
-// THIS IS MAIN
+
 const sec_per_min = 60
 const gotoTimer = (time) => {
     router.push({
@@ -43,32 +43,35 @@ export default function Home() {
                     </Text>
                 {/* Add Buttons Here*/}
                 <Pressable
-                    // Close Button
+                    // Close Button TOP LEFT Modal
                     onPress={() => setModalVisible(!modalVisible)}>
                         <MaterialIcons name="close" color="#fff" 
                         size={22} />
                 </Pressable>
                 <Pressable
-                    // Submit Task Button
-                    // TODO: Change the onPress to Submit
+                    // Submit Task Button (This is a check mark icon)
+                    // TOP RIGHT of Modal
+                    // TODO: Change the onPress to Submit to tasks
                     onPress={() => setModalVisible(!modalVisible)}>
                     <MaterialIcons name="done" color="#fff" 
                         size={22} />
                 </Pressable>
                 <TextInput
                     // Task Entry Button
+                    // CENTER of Modal
                     placeholder='Enter Task'
                     onChangeText={(text) => setInputText(text)}
                     value={inputText} 
                 /> 
                 <TextInput
                     // Set Time Duration Button
+                    // BOTTOM LEFT Modal
                     placeholder='Enter Time'
                     onChangeText={(text) => setInputText(text)}
                     value={inputText} 
                 />         
                 <Pressable
-                    // Untimed Button
+                    // Untimed Button BOTTOM Right Modal
                     // TODO: Change the onPress to highlight around button
                     onPress={() => setModalVisible(!modalVisible)}>
                     <Text style={styles.textStyle}>No Timer</Text>
