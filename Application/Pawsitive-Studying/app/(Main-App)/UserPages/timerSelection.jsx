@@ -134,16 +134,6 @@ export default function Home() {
                 <TouchableOpacity
                     style={styles.Button}
                     onPress={() => {
-                        gotoTimer(10 * sec_per_min);
-                    }}
-                >
-                    <Text style={textStyles.textBody}>
-                        Timer For 10 Minutes
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.Button}
-                    onPress={() => {
                         gotoTimer(20 * sec_per_min);
                     }}
                 >
@@ -159,6 +149,16 @@ export default function Home() {
                 >
                     <Text style={textStyles.textBody}>
                         Timer For 30 Minutes
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.Button}
+                    onPress={() => {
+                        gotoTimer(45 * sec_per_min);
+                    }}
+                >
+                    <Text style={textStyles.textBody}>
+                        Timer For 45 Minutes
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
