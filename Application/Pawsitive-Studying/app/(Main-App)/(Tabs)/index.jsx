@@ -10,7 +10,6 @@ import {
 import MaterialIcons // For + button
 from '@expo/vector-icons/MaterialIcons';
 import React, {useState} from 'react'; // added brent
-import taskCard from "./Components/taskCard";
 import { styles, textStyles } from '../../../Styles/comp_styles.jsx'
 import { StatusBar } from 'expo-status-bar'
 import { router } from 'expo-router'
@@ -78,7 +77,7 @@ export default function Home() {
             </Modal>
 
     {/* This is outside of the modal */}
-    
+
             {/* + Button on Home Screen */}
             <Pressable style={[styles.plusButtonContainer]} onPress={() =>
             setModalVisible(true)}>
