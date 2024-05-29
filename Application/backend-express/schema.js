@@ -100,8 +100,8 @@ const charactersSchema = new mongoose.Schema(
             default: 0,
         },
         image: {
-            data: Buffer,
-            contentType: String,
+            type: String,
+            default: "None",
         },
     },
     { collection: "Characters" }
