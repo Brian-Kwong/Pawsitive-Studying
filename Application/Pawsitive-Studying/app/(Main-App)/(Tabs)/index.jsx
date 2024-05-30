@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, FlatList } from 'react-native';
 import { fetchUserTasks , addUserTask } from './requests.js'
+import { router } from "expo-router";
 
+
+const gotoTimer = (time) => {
+    router.push({
+        pathname: `../Timer/timer_page`,
+        params: { time: time },
+    });
+};
 
 export default function Home() {
     const [tasks, setTasks] = useState([]);
@@ -79,6 +87,10 @@ export default function Home() {
 
             <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
                 <Text style={styles.addButtonText}>Add Task</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.addButton} onPress={() => gotoTimer(60)}>
+                <Text style={styles.addButtonText}>Go Timer</Text>
             </TouchableOpacity>
 
             <Modal visible={modalVisible} animationType="fade" transparent={true}>

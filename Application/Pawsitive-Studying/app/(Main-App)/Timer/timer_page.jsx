@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { View, TouchableOpacity, Text } from 'react-native'
 import { CircularProgress } from 'react-native-circular-progress'
+import MusicPlayer from '../Player/player.jsx'
 import { styles, textStyles } from '../../../Styles/comp_styles.jsx' // Import styles from comp-styles.jsx
 import { useLocalSearchParams, useNavigation } from 'expo-router'
 
@@ -72,6 +73,7 @@ export default CountdownTimer = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
+            <MusicPlayer />
         </View>
     )
 }
