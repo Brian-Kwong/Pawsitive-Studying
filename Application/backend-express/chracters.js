@@ -10,10 +10,7 @@ export async function getCharacters(req, res) {
             if (!charactersID) {
                 return res.status(404).send("User not found");
             }
-            const character = await Character.find({
-                _id: { $in: charactersID.characters },
-            });
-            res.status(200).send(character);
+            res.status(200).send(charactersID);
         } else {
             const characters = await Character.find();
             res.status(200).send(characters);
