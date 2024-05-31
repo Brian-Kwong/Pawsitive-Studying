@@ -8,7 +8,6 @@ const creds = [];
 
 export async function conflictUser(username) {
     User.findOne({ username }).then((user) => {
-        console.log(user);
         if (user === null) {
             return false;
         }
@@ -61,11 +60,10 @@ export async function registerUser(req, res) {
             email,
             password: hashedPassword,
             memberSince: new Date(),
-            profileImage,
+            profileImage: profileImage !== undefined ? profileImage : "None",
             points: 0,
             tasks,
             characters,
-            passwordResetToken: [],
         });
 
         // 保存用户到数据库
