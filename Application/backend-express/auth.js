@@ -63,6 +63,7 @@ export async function registerUser(req, res) {
             password: hashedPassword,
             memberSince: new Date(),
             profileImage,
+            points: 0,
             tasks,
             characters,
             passwordResetToken: [],
