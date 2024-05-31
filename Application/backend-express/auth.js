@@ -65,7 +65,7 @@ export async function registerUser(req, res) {
             profileImage,
             tasks,
             characters,
-            passwordResetToken,
+            passwordResetToken: [],
         });
 
         // 保存用户到数据库
