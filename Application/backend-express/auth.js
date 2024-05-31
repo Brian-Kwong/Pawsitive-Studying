@@ -36,7 +36,6 @@ export async function registerUser(req, res) {
         profileImage,
         tasks,
         characters,
-        passwordResetToken,
     } = req.body;
 
     if (!name || !username || !email || !password) {
