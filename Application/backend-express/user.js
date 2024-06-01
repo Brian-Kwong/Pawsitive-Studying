@@ -23,7 +23,7 @@ export async function getUserTasks(req, res) {
 
 export async function addUserTask(req, res) {
     const userId = req.params.id; // 从URL中获取用户ID
-    let { name, course, description, time, points } = req.body; // 从请求主体中获取任务信息
+    let { name, course, description, time, points, completed } = req.body; // 从请求主体中获取任务信息
 
     // 验证输入
     if (!name || !time) {
@@ -48,6 +48,7 @@ export async function addUserTask(req, res) {
             description: description || "None",
             time,
             points,
+            completed: completed !== undefined ? completed : false,
         };
 
         // 将新任务添加到用户的任务列表中
