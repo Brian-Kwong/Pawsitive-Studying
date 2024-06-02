@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, FlatList } from 'react-native';
-import { fetchUserTasks , addUserTask } from './requests.js'
-import { router } from "expo-router";
-
+import React, { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    Modal,
+    TextInput,
+    StyleSheet,
+    FlatList,
+} from "react-native";
+import { fetchUserTasks, addUserTask } from "../UserPages/requests.js";
 
 const gotoTimer = (time) => {
     router.push({
@@ -15,9 +21,8 @@ export default function Home() {
     const [tasks, setTasks] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [newTask, setNewTask] = useState({});
-    const [nameError, setNameError] = useState('');
-    const [timeError, setTimeError] = useState('');
-
+    const [nameError, setNameError] = useState("");
+    const [timeError, setTimeError] = useState("");
 
     useEffect(() => {
         fetchTasks();
@@ -27,7 +32,7 @@ export default function Home() {
         try {
             const userTasks = await fetchUserTasks();
             console.log("User tasks:", userTasks);
-            setTasks(userTasks.tasks)
+            setTasks(userTasks.tasks);
         } catch (error) {
             console.error("Error fetching user tasks:", error);
         }
@@ -38,27 +43,26 @@ export default function Home() {
             const addedTask = await addUserTask(newTask);
             console.log("New task added:", addedTask);
             // 更新任务列表
-            fetchTasks()
+            fetchTasks();
         } catch (error) {
             console.error("Error adding task:", error);
         }
     }
 
-    function closeNewTaskModal(){
+    function closeNewTaskModal() {
         setModalVisible(false);
         setNewTask({});
-        setNameError('');
-        setTimeError('');
+        setNameError("");
+        setTimeError("");
     }
 
-
     const handleAddTask = () => {
-        console.log(newTask)
-        if(!newTask.name){
-            setNameError('must full name')
+        console.log(newTask);
+        if (!newTask.name) {
+            setNameError("must full name");
         }
-        if(!newTask.time){
-            setTimeError('must full time')
+        if (!newTask.time) {
+            setTimeError("must full time");
         }
 
         addTask(newTask);
@@ -73,19 +77,19 @@ export default function Home() {
         </View>
     );
 
-
     return (
         <View style={styles.container}>
             <Text style={styles.heading}>Tasks</Text>
             <FlatList
                 data={tasks}
                 renderItem={renderItem}
-                keyExtractor={item => item._id.toString()}
+                keyExtractor={(item) => item._id.toString()}
             />
 
-
-
-            <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => setModalVisible(true)}
+            >
                 <Text style={styles.addButtonText}>Add Task</Text>
             </TouchableOpacity>
 
@@ -98,55 +102,74 @@ export default function Home() {
                     activeOpacity={1}
                     onPress={() => closeNewTaskModal()} // 点击背景关闭模态
                 >
-                    <View style={styles.modalContainer} onStartShouldSetResponder={() => true}>
+                    <View
+                        style={styles.modalContainer}
+                        onStartShouldSetResponder={() => true}
+                    >
                         <Text style={styles.modalHeading}>Add New Task</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Task Name"
                             value={newTask.name}
                             placeholderTextColor="#888"
-                            onChangeText={text => {
+                            onChangeText={(text) => {
                                 setNewTask({ ...newTask, name: text });
-                                setNameError('');
+                                setNameError("");
                             }}
                         />
-                        {nameError ? <Text style={styles.error}>{nameError}</Text> : null}
+                        {nameError ? (
+                            <Text style={styles.error}>{nameError}</Text>
+                        ) : null}
                         <TextInput
                             style={styles.input}
                             placeholder="Time"
                             placeholderTextColor="#888"
                             value={newTask.time}
-                            onChangeText={text => {
+                            onChangeText={(text) => {
                                 setNewTask({ ...newTask, time: text });
-                                setTimeError('');
+                                setTimeError("");
                             }}
                         />
-                        {timeError ? <Text style={styles.error}>{timeError}</Text> : null}
+                        {timeError ? (
+                            <Text style={styles.error}>{timeError}</Text>
+                        ) : null}
                         <TextInput
                             style={styles.input}
                             placeholder="Course(optional)"
                             placeholderTextColor="#888"
                             value={newTask.category}
-                            onChangeText={text => setNewTask({ ...newTask, course: text })}
+                            onChangeText={(text) =>
+                                setNewTask({ ...newTask, course: text })
+                            }
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="Description(optional)"
                             placeholderTextColor="#888"
                             value={newTask.category}
-                            onChangeText={text => setNewTask({ ...newTask, description: text })}
+                            onChangeText={(text) =>
+                                setNewTask({ ...newTask, description: text })
+                            }
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="Points(optional)"
                             placeholderTextColor="#888"
                             value={newTask.category}
-                            onChangeText={text => setNewTask({ ...newTask, points: text })}
+                            onChangeText={(text) =>
+                                setNewTask({ ...newTask, points: text })
+                            }
                         />
-                        <TouchableOpacity style={styles.addButton} onPress={handleAddTask}>
+                        <TouchableOpacity
+                            style={styles.addButton}
+                            onPress={handleAddTask}
+                        >
                             <Text style={styles.addButtonText}>Add Task</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.cancelButton} onPress={() => closeNewTaskModal()}>
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={() => closeNewTaskModal()}
+                        >
                             <Text style={styles.cancelButtonText}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
@@ -163,64 +186,64 @@ const styles = StyleSheet.create({
     },
     heading: {
         fontSize: 20,
-        fontWeight: 'bold',
+        fontWeight: "bold",
         marginBottom: 10,
     },
     task: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        justifyContent: "space-between",
         marginBottom: 10,
     },
     addButton: {
-        backgroundColor: 'blue',
+        backgroundColor: "blue",
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
-        alignItems: 'center',
+        alignItems: "center",
         marginTop: 20,
     },
     addButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: "white",
+        fontWeight: "bold",
     },
     modalBackground: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     modalContainer: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
         padding: 20,
         borderRadius: 10,
-        width: '80%',
+        width: "80%",
     },
     modalHeading: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: "bold",
         marginBottom: 10,
     },
     input: {
         borderWidth: 1,
-        borderColor: 'gray',
+        borderColor: "gray",
         borderRadius: 5,
         padding: 10,
         marginBottom: 10,
     },
     error: {
-        color: 'red',
+        color: "red",
         marginBottom: 10,
     },
     cancelButton: {
-        backgroundColor: 'red',
+        backgroundColor: "red",
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
-        alignItems: 'center',
+        alignItems: "center",
         marginTop: 10,
     },
     cancelButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: "white",
+        fontWeight: "bold",
     },
 });

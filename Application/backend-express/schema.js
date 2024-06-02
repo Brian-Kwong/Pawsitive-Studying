@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
+const thirty_min_in_ms = 1800000;
 
 const userSchema = new mongoose.Schema(
     {
@@ -34,8 +35,13 @@ const userSchema = new mongoose.Schema(
             default: Date(),
         },
         profileImage: {
-            data: Buffer,
-            contentType: String,
+            type: String,
+            default: "None",
+        },
+        points: {
+            type: Number,
+            required: true,
+            default: 0,
         },
         tasks: [
             {
@@ -64,6 +70,11 @@ const userSchema = new mongoose.Schema(
                     required: true,
                     default: 0,
                 },
+                completed: {
+                    type: Boolean,
+                    required: true,
+                    default: false,
+                },
             },
         ],
         characters: [
@@ -74,8 +85,16 @@ const userSchema = new mongoose.Schema(
         ],
         passwordResetToken: [
             {
-                type: Number,
-                required: false,
+                token: {
+                    type: Number,
+                    required: true,
+                    trim: true,
+                },
+                expiration: {
+                    type: Date,
+                    required: true,
+                    default: Date(Date.now() + thirty_min_in_ms),
+                },
             },
         ],
     },
@@ -100,8 +119,8 @@ const charactersSchema = new mongoose.Schema(
             default: 0,
         },
         image: {
-            data: Buffer,
-            contentType: String,
+            type: String,
+            default: "None",
         },
     },
     { collection: "Characters" }

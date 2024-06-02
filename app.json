@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "5fce65a5-b6b0-41b3-b3b2-bfc862975a25"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.tigerplayspc.pawsitivestudying"
+    }
+  }
+}

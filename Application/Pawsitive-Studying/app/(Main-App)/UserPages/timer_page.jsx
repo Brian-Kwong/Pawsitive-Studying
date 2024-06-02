@@ -6,38 +6,38 @@ import { styles, textStyles } from '../../../Styles/comp_styles.jsx' // Import s
 import { useLocalSearchParams, useNavigation } from 'expo-router'
 
 export default CountdownTimer = () => {
-    const duration = useLocalSearchParams().time
+    const duration = useLocalSearchParams().time;
 
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     useEffect(() => {
         navigation.setOptions({
-            title: 'Timer',
+            title: "Timer",
             textStyles: textStyles.textHeader,
-            headerBackTitle: 'Back',
-        })
-    }, [navigation])
+            headerBackTitle: "Back",
+        });
+    }, [navigation]);
 
-    const [remainingTimeMin, setRemaningTimeMin] = useState(duration / 60)
-    const [remainingTimeSec, setRemaningTimeSec] = useState(duration)
-    const [progress, setProgress] = useState(100)
-    const [isRunning, setIsRunning] = useState(false)
+    const [remainingTimeMin, setRemaningTimeMin] = useState(duration / 60);
+    const [remainingTimeSec, setRemaningTimeSec] = useState(duration);
+    const [progress, setProgress] = useState(100);
+    const [isRunning, setIsRunning] = useState(false);
 
     useEffect(() => {
         if (isRunning) {
             const timer = setInterval(() => {
-                let remainingTimeInSeconds = remainingTimeSec - 1
-                setRemaningTimeSec(remainingTimeInSeconds)
-                setRemaningTimeMin(Math.floor(remainingTimeInSeconds / 60))
-                setProgress((remainingTimeInSeconds / duration) * 100)
-            }, 1000)
+                let remainingTimeInSeconds = remainingTimeSec - 1;
+                setRemaningTimeSec(remainingTimeInSeconds);
+                setRemaningTimeMin(Math.floor(remainingTimeInSeconds / 60));
+                setProgress((remainingTimeInSeconds / duration) * 100);
+            }, 1000);
             if (remainingTimeSec <= 0) {
-                clearInterval(timer)
-                setIsRunning(false)
+                clearInterval(timer);
+                setIsRunning(false);
             }
-            return () => clearInterval(timer)
+            return () => clearInterval(timer);
         }
-    }, [remainingTimeSec, isRunning])
+    }, [remainingTimeSec, isRunning]);
 
     return (
         <View style={styles.container}>
@@ -52,7 +52,7 @@ export default CountdownTimer = () => {
                     lineCap="round"
                 >
                     {() => (
-                        <View style={{ alignItems: 'center' }}>
+                        <View style={{ alignItems: "center" }}>
                             <Text style={textStyles.textSubHeader}>
                                 {remainingTimeMin}m
                             </Text>
@@ -68,12 +68,12 @@ export default CountdownTimer = () => {
                 >
                     <Text style={styles.countdownButtonText}>
                         {isRunning
-                            ? 'Pause'
-                            : `${duration === remainingTimeSec ? 'Start' : 'Resume'}`}
+                            ? "Pause"
+                            : `${duration === remainingTimeSec ? "Start" : "Resume"}`}
                     </Text>
                 </TouchableOpacity>
             </View>
             <MusicPlayer />
         </View>
-    )
-}
+    );
+};

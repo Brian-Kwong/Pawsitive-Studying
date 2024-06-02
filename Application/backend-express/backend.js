@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { getUserTasks, addUserTask } from "./user.js";
+import { getCharacters, addCharToUser } from "./chracters.js";
 import {
     registerUser,
     loginUser,
@@ -100,6 +101,11 @@ app.post("/users/:id/:playlistId/song", authenticateUser, addSong);
 app.get("/searchSong", authenticateUser, fetchSongFromSoundCloud);
 app.get("/song/:id", authenticateUser, findSong);
 app.get("/songs/stream/:songId", authenticateUser, getStreamURL);
+
+// Character endpoints
+app.get("/characters", authenticateUser, getCharacters);
+app.get("/users/:id/characters", authenticateUser, getCharacters);
+app.post("/users/:id/character", authenticateUser, addCharToUser);
 
 // Binds socket to port
 const server = async () =>
