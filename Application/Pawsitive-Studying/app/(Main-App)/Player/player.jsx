@@ -37,7 +37,10 @@ const MusicPlayer = () => {
     useEffect(() => {
         setupTrack();
 
-        return () => TrackPlayer.destroy();
+        return async () => {
+            await TrackPlayer.stop();  // 停止播放器
+            await TrackPlayer.removeUpcomingTracks();  // 移除所有队列中的曲目
+        };
     }, []);
 
     const progress = useProgress();
