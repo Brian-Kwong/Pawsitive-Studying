@@ -313,3 +313,89 @@ export function makeNewUser(user) {
             });
     });
 }
+
+export function sendPasswordResetRequest(user) {
+    return new Promise((resolve, reject) => {
+        fetch(`${baseURL}/send-reset-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                username: user.username,
+            }),
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    response.json().then((data) => {
+                        if (data !== null) {
+                            resolve(data);
+                        } else {
+                            alert("Unable to find user");
+                            reject(404);
+                        }
+                    });
+                } else {
+                    alert("Unable to find user");
+                    reject(404);
+                }
+            })
+            .catch((err) => {
+                alert("Failed to send reset password request", err);
+                reject(err);
+            });
+    });
+}
+
+export function resetPassword(username, token, newPassword) {
+    return new Promise((resolve, reject) => {
+        fetch(`${baseURL}/send-reset-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                username: username,
+                token: token,
+                newPassword: newPassword,
+            }),
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    response.json().then((data) => {
+                        if (data !== null) {
+                            savePassword(newPassword)
+                                .then(() => {
+                                    saveID(username, data.token)
+                                        .then(() => {
+                                            resolve(200);
+                                        })
+                                        .catch((err) => {
+                                            alert(
+                                                "Failed to store user id Try restarting the app."
+                                            );
+                                            reject(err);
+                                        });
+                                })
+                                .catch((err) => {
+                                    alert(
+                                        "Failed to store login Try restarting the app."
+                                    );
+                                    reject(err);
+                                });
+                        } else {
+                            alert("Unable to find user");
+                            reject(404);
+                        }
+                    });
+                } else {
+                    alert("Incorrect token. Please try again.");
+                    reject(404);
+                }
+            })
+            .catch((err) => {
+                alert("Failed to reset password", err);
+                reject(err);
+            });
+    });
+}
