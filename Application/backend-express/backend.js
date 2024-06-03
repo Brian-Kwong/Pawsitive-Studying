@@ -19,6 +19,8 @@ import {
     getUsers,
     getUserByUsernameOrEmail,
     getUserById,
+    sendResetPasswordEmail,
+    resetPassword,
 } from "./auth.js";
 import serverless from "serverless-http";
 import {
@@ -119,6 +121,10 @@ app.delete("/users/:id/tasks/:taskId", authenticateUser, removeUserTask);
 app.put("/users/:id/tasks/", authenticateUser, editTasksDetails);
 app.get("/users/:id/tasks/completed", authenticateUser, getCompletedTasks);
 app.put("/users/:id/tasks/:taskId/completed", authenticateUser, markTaskAsDone);
+
+// Reset password
+app.put("/send-reset-password", sendResetPasswordEmail);
+app.put("/reset-password", resetPassword);
 
 // Binds socket to port
 const server = async () =>

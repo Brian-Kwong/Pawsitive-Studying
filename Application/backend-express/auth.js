@@ -1,10 +1,20 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User, Character } from "./schema.js";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import crypto from "crypto";
 dotenv.config();
 
-const creds = [];
+const emailClient = nodemailer.createTransport({
+    host: "smtp.zoho.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+    },
+});
 
 export async function conflictUser(username) {
     User.findOne({ username }).then((user) => {
@@ -78,12 +88,12 @@ export async function registerUser(req, res) {
 }
 
 // This function generates a JWT token for the user
-function generateAccessToken(username) {
+function generateAccessToken(username, time) {
     return new Promise((resolve, reject) => {
         jwt.sign(
             { username: username },
             process.env.TOKEN_SECRET,
-            { expiresIn: "1d" },
+            { expiresIn: time ? time : "1d" },
             (error, token) => {
                 if (error) {
                     reject(error);
@@ -178,3 +188,64 @@ function findUserByUsernameAndEmail(username, email) {
 export const getUserById = (id) => {
     return User.findById(id);
 };
+
+export async function sendResetPasswordEmail(req, res) {
+    try {
+        const thirty_minutes = 30 * 60 * 1000;
+        const username = req.body.username;
+        let randomResetCode = await crypto.randomInt(0, 1000000);
+        randomResetCode = randomResetCode.toString().padStart(6, "0");
+
+        // Store in database
+        const user = await User.findOne({ username });
+        user.passwordResetToken.push({
+            token: randomResetCode,
+            expiration: new Date(Date.now() + thirty_minutes),
+        });
+        await user.save();
+
+        // Send email
+        await emailClient.sendMail({
+            from: `"Study Buddy" <${process.env.EMAIL}>`,
+            to: user.email,
+            subject: "Password Reset",
+            text: `Your password reset code is ${randomResetCode}`,
+        });
+
+        res.status(200).send(`Email sent to ${user.email}`);
+    } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+export async function resetPassword(req, res) {
+    try {
+        const { username, token, newPassword } = req.body;
+        let user = await User.findOne({ username });
+        if (!user) {
+            return res.status(404).send("User not found");
+        } else {
+            let userResetTokens = user.passwordResetToken;
+            if (
+                userResetTokens.filter(
+                    (item) =>
+                        item.token.toString() === token.toString() &&
+                        item.expiration.valueOf() > Date.now()
+                ).length === 0
+            ) {
+                return res.status(401).send("Invalid reset token");
+            } else {
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(newPassword, salt);
+                user.password = hashedPassword;
+                user.passwordResetToken = [];
+                await user.save();
+                const jwt_token = await generateAccessToken(username, "1h");
+                res.status(200).send({ token: jwt_token });
+            }
+        }
+    } catch (error) {
+        console.error("Error resetting password:", error);
+    }
+}
