@@ -26,15 +26,21 @@ export async function addCharToUser(req, res) {
     const userID = req.params.id;
     const { characterID } = req.body;
     try {
-        const updatedUser = await User.findOneAndUpdate(
-            { _id: userID },
-            { $push: { characters: characterID } },
-            { new: true }
-        );
-        if (!updatedUser) {
+        let user = await User.findById(userID);
+        const character = await Character.findById(characterID);
+        if (!user) {
             return res.status(404).send("User not found");
+        } else {
+            user.characters.push(characterID);
+            if (user.points >= character.pointsRequired) {
+                user.characters.push(characterID);
+                user.points -= character.pointsRequired;
+                user.save();
+                res.status(201).send(user);
+            } else {
+                res.status(400).send("Not enough points");
+            }
         }
-        res.status(201).send(updatedUser);
     } catch (error) {
         res.status(400).send(error);
     }
