@@ -2,7 +2,14 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { getUserTasks, addUserTask } from "./user.js";
+import {
+    getUserTasks,
+    addUserTask,
+    removeUserTask,
+    editTasksDetails,
+    getCompletedTasks,
+    markTaskAsDone,
+} from "./user.js";
 import { getCharacters, addCharToUser } from "./chracters.js";
 import {
     registerUser,
@@ -106,6 +113,12 @@ app.get("/songs/stream/:songId", authenticateUser, getStreamURL);
 app.get("/characters", authenticateUser, getCharacters);
 app.get("/users/:id/characters", authenticateUser, getCharacters);
 app.post("/users/:id/character", authenticateUser, addCharToUser);
+
+// Updating tasks
+app.delete("/users/:id/tasks/:taskId", authenticateUser, removeUserTask);
+app.put("/users/:id/tasks/", authenticateUser, editTasksDetails);
+app.get("/users/:id/tasks/completed", authenticateUser, getCompletedTasks);
+app.put("/users/:id/tasks/:taskId/completed", authenticateUser, markTaskAsDone);
 
 // Binds socket to port
 const server = async () =>
