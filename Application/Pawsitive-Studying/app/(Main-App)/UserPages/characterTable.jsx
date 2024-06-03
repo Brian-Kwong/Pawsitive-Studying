@@ -75,6 +75,16 @@ export default function CharacterTable(characterList) {
                                         styles.Button,
                                         { opacity: userOwns ? 0.5 : 1 },
                                     ]}
+                                    onPress={() => {
+                                        if (!userOwns) {
+                                            console.log(character._id);
+                                            characterList.purchaseCharacter(
+                                                character._id
+                                            );
+                                            return;
+                                        }
+                                        // Purchase character
+                                    }}
                                 >
                                     <Text>Purchase</Text>
                                 </TouchableOpacity>

@@ -50,6 +50,30 @@ export default function Char() {
         userCharacters: [],
     });
 
+    async function purchaseCharacter(id) {
+        const token = await SecureStore.getItemAsync("Token");
+        const userID = await getID();
+        let data = await fetch(`${baseURL}/users/${userID}/character`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ characterId: id }),
+        });
+        if (data.ok) {
+            console.log("Character purchased!");
+            setCharacters({
+                characters: characterInfo.characters,
+                userCharacters: [...characterInfo.userCharacters, id],
+            });
+        } else if (data.status === 400) {
+            console.log("Insufficient funds.");
+        } else {
+            console.error("Failed to purchase character.");
+        }
+    }
+
     useEffect(() => {
         getCharacters()
             .then((data) => {
@@ -65,6 +89,7 @@ export default function Char() {
             <CharacterTable
                 characterLists={characterInfo.characters}
                 userCharacters={characterInfo.userCharacters}
+                purchaseCharacter={purchaseCharacter}
             />
             <StatusBar style="auto" />
         </View>

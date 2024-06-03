@@ -31,7 +31,6 @@ export async function addCharToUser(req, res) {
         if (!user) {
             return res.status(404).send("User not found");
         } else {
-            user.characters.push(characterID);
             if (user.points >= character.pointsRequired) {
                 user.characters.push(characterID);
                 user.points -= character.pointsRequired;
