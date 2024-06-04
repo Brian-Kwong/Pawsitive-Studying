@@ -1,20 +1,23 @@
 import { View, TextInput, TouchableOpacity, Text, Alert } from "react-native";
 import { styles, textStyles } from "../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
-import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { logInWithFaceID, logInWithPassword } from "./security.js";
-import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
+import { resetPassword } from "./security.js";
 
 export default function Reset() {
     const userUd = useLocalSearchParams().userId;
+    const response = useLocalSearchParams().response;
 
     const [resetPasswordFeilds, setResetPasswordFeilds] = useState({
         password: "",
         token: "",
     });
     const [resetPasswordMsg, setResetPasswordMsg] = useState("Sending...");
+
+    useEffect(() => {
+        setResetPasswordMsg(response);
+    }, [response]);
 
     return (
         <View style={styles.container}>
@@ -37,8 +40,8 @@ export default function Reset() {
             />
             <TextInput
                 style={styles.TextInput}
-                placeholder="Password"
-                autoComplete="password"
+                placeholder="New Password"
+                autoComplete="New Password"
                 blurOnSubmit={true}
                 blurOEnter={true}
                 secureTextEntry={true}
@@ -63,7 +66,11 @@ export default function Reset() {
                             resetPasswordFeilds.token !== "" &&
                             resetPasswordFeilds.password !== ""
                         ) {
-                            logInWithPassword(user)
+                            resetPassword(
+                                userUd,
+                                resetPasswordFeilds.token,
+                                resetPasswordFeilds.password
+                            )
                                 .then(() => {
                                     router.replace({
                                         pathname: "../(Main-App)/(Tabs)",
