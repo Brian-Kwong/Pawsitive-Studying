@@ -126,7 +126,14 @@ export default function Welcome() {
                 >
                     <Text style={textStyles.textBody}>Signup</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.textButton}>
+                <TouchableOpacity
+                    style={styles.textButton}
+                    onPress={() =>
+                        router.push({
+                            pathname: "/passwordReset1",
+                        })
+                    }
+                >
                     <Text style={textStyles.textBody}>Forgot</Text>
                     <Text style={textStyles.textBody}>Password</Text>
                 </TouchableOpacity>

@@ -12,7 +12,7 @@ const tableStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         wiidth: "100%",
-        aspectRatio: 1 / 1.8,
+        aspectRatio: 1 / 1.7,
     },
     imageProp: {
         width: "90%",
@@ -31,9 +31,9 @@ export default function CharacterTable(characterList) {
         );
     } else {
         return (
-            <View style={{ width: "100%", height: "100%" }}>
+            <View style={{ width: "100%", height: "90%" }}>
                 <ScrollView
-                    style={{ width: "100%", height: "80%" }}
+                    style={{ width: "100%", height: "90%" }}
                     contentContainerStyle={tableStyles.tableContainer}
                     horizontal={true}
                 >
@@ -75,6 +75,15 @@ export default function CharacterTable(characterList) {
                                         styles.Button,
                                         { opacity: userOwns ? 0.5 : 1 },
                                     ]}
+                                    onPress={() => {
+                                        if (!userOwns) {
+                                            characterList.purchaseCharacter(
+                                                character._id
+                                            );
+                                            return;
+                                        }
+                                        // Purchase character
+                                    }}
                                 >
                                     <Text>Purchase</Text>
                                 </TouchableOpacity>
