@@ -1,3 +1,4 @@
+import { application } from "express";
 import { Playlist, User } from "./schema.js";
 import dotenv from "dotenv";
 // Music
@@ -6,6 +7,61 @@ import dotenv from "dotenv";
 dotenv.config();
 const soundCloudAPIKey = process.env.SOUNDCLOUD_API_KEY;
 const soundCloudURL = "https://api-v2.soundcloud.com/search/tracks";
+
+//Function to search songs from SoundCloud
+export async function searchSongs(req, res) {
+    const searchTerm = req.query.searchTerm;
+    const url = `${soundCloudURL}?q=${searchTerm}&access=playable`;
+
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                Authorization: `OAuth ${soundCloudAPIKey}`,
+            },
+        });
+        const data = await response.json();
+
+        const songs = data.collection.map((song) => ({
+            id: song.id,
+            title: song.title,
+            artist: song.user.username,
+            duration: song.duration,
+            artwork: song.artwork_url,
+            url: song.permalink_url,
+        }));
+
+        res.status(200).json(songs);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch songs" });
+    }
+}
+application.get("/searchSong", searchSongs);
+
+// Add Song to Playlist
+export async function addSongToPlaylist(req, res) {
+    const { playlistId, song } = req.body;
+
+    try {
+        const playlist = await Playlist.findById(playlistId);
+        if (!playlist) {
+            return res.status(404).json({ error: "Playlist not found" });
+        }
+
+        playlist.songs.push(song);
+        playlist.numberOfSongs += 1;
+
+        await playlist.save();
+
+        res.status(201).json(playlist);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to add song to playlist" });
+    }
+}
+
+application.post("/addSongToPlaylist", addSongToPlaylist);
+
+
 
 // Get playlists
 export async function getPlaylist(req, res) {
