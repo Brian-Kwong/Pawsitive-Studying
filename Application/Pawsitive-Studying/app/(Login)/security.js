@@ -350,7 +350,7 @@ export function sendPasswordResetRequest(username) {
 // Code for resetting password
 export function resetPassword(username, token, newPassword) {
     return new Promise((resolve, reject) => {
-        fetch(`${baseURL}/send-reset-password`, {
+        fetch(`${baseURL}/reset-password`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -369,7 +369,19 @@ export function resetPassword(username, token, newPassword) {
                                 .then(() => {
                                     saveID(username, data.token)
                                         .then(() => {
-                                            resolve(200);
+                                            SecureStore.setItemAsync(
+                                                "Token",
+                                                data.token
+                                            )
+                                                .then(() => {
+                                                    resolve(200);
+                                                })
+                                                .catch((err) => {
+                                                    alert(
+                                                        "Failed to store login Try restarting the app."
+                                                    );
+                                                    reject(err);
+                                                });
                                         })
                                         .catch((err) => {
                                             alert(

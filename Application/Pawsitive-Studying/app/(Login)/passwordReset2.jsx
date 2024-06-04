@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { resetPassword } from "./security.js";
 
 export default function Reset() {
-    const userUd = useLocalSearchParams().userId;
+    const userUd = useLocalSearchParams().username;
     const response = useLocalSearchParams().msg;
 
     // Password reset feilds
