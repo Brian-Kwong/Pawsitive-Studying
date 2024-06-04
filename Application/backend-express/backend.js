@@ -9,14 +9,19 @@ import {
     editTasksDetails,
     getCompletedTasks,
     markTaskAsDone,
+    getUserUsername,
+    addUserUsername,
+    getUserEmail,
+    addUserEmail,
+    getUserName,
+    addUserName,
 } from "./user.js";
 import { getCharacters, addCharToUser } from "./chracters.js";
+
 import {
     registerUser,
     loginUser,
-    conflictUser,
     authenticateUser,
-    getUsers,
     getUserByUsernameOrEmail,
     getUserById,
     sendResetPasswordEmail,
@@ -125,6 +130,22 @@ app.put("/users/:id/tasks/:taskId/completed", authenticateUser, markTaskAsDone);
 // Reset password
 app.put("/send-reset-password", sendResetPasswordEmail);
 app.put("/reset-password", resetPassword);
+
+// Brent
+// ADD ENDPOINTS FOR SETTINGS
+// ACTUAL GET to get user from database
+// Edit with new data
+// Object.save to update
+
+// Name
+app.get("/users/:name", authenticateUser, getUserName);
+app.post("/users/:name", authenticateUser, addUserName);
+// Username
+app.get("/users/:username", authenticateUser, getUserUsername);
+app.post("/users/:username", authenticateUser, addUserUsername);
+// Email
+app.get("/users/:email", authenticateUser, getUserEmail);
+app.post("/users/:email", authenticateUser, addUserEmail);
 
 // Binds socket to port
 const server = async () =>
