@@ -239,7 +239,7 @@ export async function addUserUsername(req, res) {
             return res.status(404).send("username already exists");
         }
         // else push the new name
-        user.username.push(username);
+        user.username = username;
         await user.save();
         res.status(201).json(username);
     } catch (error) {
