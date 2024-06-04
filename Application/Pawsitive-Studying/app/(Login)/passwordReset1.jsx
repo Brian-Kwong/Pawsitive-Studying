@@ -1,4 +1,4 @@
-import { View, TextInput, TouchableOpacity, Text, Alert } from "react-native";
+import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import { styles, textStyles } from "../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
@@ -10,7 +10,7 @@ export default function Reset() {
 
     return (
         <View style={styles.container}>
-            <Text style={textStyles.textSubHeader}>
+            <Text style={[textStyles.textSubHeader, { textAlign: "center" }]}>
                 Please enter your username associated with your account
             </Text>
             <TextInput
@@ -26,6 +26,7 @@ export default function Reset() {
                         if (username !== "") {
                             sendPasswordResetRequest(username)
                                 .then((response) => {
+                                    console.log(response);
                                     router.replace({
                                         pathname: "/passwordReset2",
                                         params: {
@@ -38,13 +39,11 @@ export default function Reset() {
                                     console.log(err);
                                 });
                         } else {
-                            alert(
-                                "Please make sure to enter a token and password."
-                            );
+                            alert("No username entered");
                         }
                     }}
                 >
-                    <Text style={textStyles.textBody}>Login</Text>
+                    <Text style={textStyles.textBody}>Reset</Text>
                 </TouchableOpacity>
             </View>
             <StatusBar style="auto" />

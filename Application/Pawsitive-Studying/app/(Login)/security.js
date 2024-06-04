@@ -314,20 +314,20 @@ export function makeNewUser(user) {
     });
 }
 
-export function sendPasswordResetRequest(user) {
+export function sendPasswordResetRequest(username) {
     return new Promise((resolve, reject) => {
         fetch(`${baseURL}/send-reset-password`, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username: user.username,
+                username: username,
             }),
         })
             .then((response) => {
                 if (response.status === 200) {
-                    response.json().then((data) => {
+                    response.text().then((data) => {
                         if (data !== null) {
                             resolve(data);
                         } else {
@@ -347,10 +347,11 @@ export function sendPasswordResetRequest(user) {
     });
 }
 
+// Code for resetting password
 export function resetPassword(username, token, newPassword) {
     return new Promise((resolve, reject) => {
         fetch(`${baseURL}/send-reset-password`, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -389,6 +390,7 @@ export function resetPassword(username, token, newPassword) {
                         }
                     });
                 } else {
+                    console.log(response.status);
                     alert("Incorrect token. Please try again.");
                     reject(404);
                 }

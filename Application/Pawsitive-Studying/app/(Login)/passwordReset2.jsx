@@ -7,17 +7,19 @@ import { resetPassword } from "./security.js";
 
 export default function Reset() {
     const userUd = useLocalSearchParams().userId;
-    const response = useLocalSearchParams().response;
+    const response = useLocalSearchParams().msg;
 
+    // Password reset feilds
     const [resetPasswordFeilds, setResetPasswordFeilds] = useState({
         password: "",
         token: "",
     });
     const [resetPasswordMsg, setResetPasswordMsg] = useState("Sending...");
 
+    // Sets response from previous page
     useEffect(() => {
         setResetPasswordMsg(response);
-    }, [response]);
+    }, []);
 
     return (
         <View style={styles.container}>
