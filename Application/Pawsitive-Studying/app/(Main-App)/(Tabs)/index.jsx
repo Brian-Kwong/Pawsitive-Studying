@@ -6,22 +6,22 @@ import {
     Modal,
     TextInput,
     StyleSheet,
-    FlatList,
 } from "react-native";
-import { fetchUserTasks, addUserTask } from "../UserPages/requests.js";
-import { router } from "expo-router";
+import { fetchUserTasks, addUserTask, deleteUserTask, editUserTask } from "../UserPages/requests.js";
+import { router,useFocusEffect } from "expo-router";
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 
-const gotoTimer = (time) => {
+const gotoTimer = (task) => {
     router.push({
         pathname: `../UserPages/timer_page`,
-        params: { time: time },
+        params: task,
     });
 };
 
 const TaskModal = ({
     selectedTask,
+    setSelectedTask,
     modalVisible,
     setModalVisible,
     uploadTask,
@@ -31,14 +31,21 @@ const TaskModal = ({
     const [nameError, setNameError] = useState("");
     const [timeError, setTimeError] = useState("");
     const [buttonText, setButtonText] = useState("Add Task");
+    const [modalTitle, setModalTitle] = useState("Add New Task");
 
     useEffect(() => {
         if (selectedTask && Object.keys(selectedTask).length !== 0) {
-            setTask(selectedTask);
+            setTask({
+                ...selectedTask,
+                time:String(selectedTask.time),
+                points:String(selectedTask.points),
+            });
             setButtonText("Update Task");
+            setModalTitle("Edit Task")
         } else {
             setTask({});
             setButtonText("Add Task");
+            setModalTitle("Add New Task")
         }
     }, [selectedTask]);
 
@@ -48,7 +55,7 @@ const TaskModal = ({
 
 
     function closeNewTaskModal() {
-        setTask({});
+        setSelectedTask({});
         setNameError("");
         setTimeError("");
         setModalVisible(false);
@@ -79,7 +86,7 @@ const TaskModal = ({
                 <View style={styles.modalContainer}
                     onStartShouldSetResponder={() => true}
                 >
-                    <Text style={styles.modalHeading}>Add New Task</Text>
+                    <Text style={styles.modalHeading}>{modalTitle}</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Task Name"
@@ -155,17 +162,19 @@ export default function Home() {
     const [tasks, setTasks] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
+    const [currentTaskFunction, setCurrentTaskFunction] = useState(null);
 
-
-    useEffect(() => {
-        fetchTasks();
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchTasks();
+        },[])
+    )
 
     async function fetchTasks() {
         try {
             const userTasks = await fetchUserTasks();
-            console.log("User tasks:", userTasks);
-            setTasks(userTasks.tasks);
+            let allTask = userTasks.tasks;
+            setTasks(allTask.filter(task => !task.completed));
         } catch (error) {
             console.error("Error fetching user tasks:", error);
         }
@@ -182,12 +191,37 @@ export default function Home() {
         }
     }
 
-    let uploadTask;
+    async function deleteTask(taskId) {
+        try {
+            const deletedTaskResponse = await deleteUserTask(taskId);
+            if(deletedTaskResponse.ok){
+                fetchTasks();
+            }
+        } catch (error) {
+            console.error("Error deleting task:", error);
+        }
+    }
+
+    async function editTask(task) {
+        try {
+            const editTaskResponse = await editUserTask(task);
+            fetchTasks();
+        } catch (error) {
+            console.error("Edit Task error:",error);
+        }
+    }
+
+    function clickEditTask(taskMessage) {
+        setSelectedTask(taskMessage);
+        setCurrentTaskFunction(() => editTask);
+        setModalVisible(true);
+    }
+
 
     function clickAddTask() {
         setSelectedTask({});
+        setCurrentTaskFunction(() => addTask); // 将添加任务的函数设置为当前函数
         setModalVisible(true);
-        uploadTask = addTask;
     }
 
     const renderItem = ({ item }) => (
@@ -202,19 +236,19 @@ export default function Home() {
         <View style={styles.rowBack}>
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                onPress={() => console.log("Start Task", data.item)}
+                onPress={() => gotoTimer(data.item)}
             >
                 <Text style={styles.backTextWhite}>Start</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnCenter]}
-                onPress={() => console.log("Edit Task", data.item)}
+                onPress={() => clickEditTask(data.item)}
             >
                 <Text style={styles.backTextWhite}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                onPress={() => console.log("Delete Task", data.item)}
+                onPress={() => deleteTask(data.item._id)}
             >
                 <Text style={styles.backTextWhite}>Delete</Text>
             </TouchableOpacity>
@@ -249,7 +283,8 @@ export default function Home() {
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
                 selectedTask={selectedTask}
-                uploadTask={uploadTask}
+                setSelectedTask={setSelectedTask}
+                uploadTask={currentTaskFunction}
             />
 
 
