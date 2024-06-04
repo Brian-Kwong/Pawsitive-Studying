@@ -61,4 +61,100 @@ export async function addUserTask(req, res) {
         console.error("Error adding task:", error);
         res.status(500).send("Internal Server Error");
     }
+};
+// Add export functions to update user
+// Need get and add for all
+// Name, username, email, password
+export async function getUserName(req, res) {
+    // The name the user is looking for
+    const name = req.params.name;
+    try {
+        // Look in MongoDB for name
+        const user = await User.findByName(name).select('name');
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        // If found return the name
+        res.status(200).json({name: user.name});
+    } catch (error) {
+        res.status(500).send("Server error");
+    }
 }
+export async function getUserUsername(req, res) {
+      // The username the user is looking for
+      const username = req.params.username;
+      try {
+          // Look in MongoDB for name
+          const user = await User.findByUsername(username).select('username');
+          if (!user) {
+              return res.status(404).send("Username not found");
+          }
+          // If found return the name
+          res.status(200).json({username: user.username});
+      } catch (error) {
+          res.status(500).send("Server error");
+      }
+}
+export async function getUserEmail(req, res) {
+      // The email the user is looking for
+      const email = req.params.email;
+      try {
+          // Look in MongoDB
+          const user = await User.findByEmail(email).select('email');
+          if (!user) {
+              return res.status(404).send("Email not found");
+          }
+          // If found return email
+          res.status(200).json({email: user.email});
+      } catch (error) {
+          res.status(500).send("Server error");
+      }
+}
+
+
+export async function addUserName(req, res) {
+    const name = req.params.name;
+    try {
+        const user = await User.findByName(name);
+        if (user) {
+            return res.status(404).send("name already exists");
+        }
+        // else push the new name
+        user.name.push(name);
+        await user.save()
+        res.status(201).json(name);
+    } catch (error) {
+        res.status(500).send("Server error");
+    }
+}
+export async function addUserUsername(req, res) {
+    const username = req.params.username;
+    try {
+        const user = await User.findByUsername(username);
+        if (user) {
+            return res.status(404).send("username already exists");
+        }
+        // else push the new name
+        user.username.push(username);
+        await user.save()
+        res.status(201).json(username);
+    } catch (error) {
+        res.status(500).send("Server error");
+    }
+}
+export async function addUserEmail(req, res) {
+    const email = req.params.email;
+    try {
+        const user = await User.findByEmail(email);
+        if (user) {
+            return res.status(404).send("email already exists");
+        }
+        // else push the new name
+        user.email.push(email);
+        await user.save()
+        res.status(201).json(email);
+    } catch (error) {
+        res.status(500).send("Server error");
+    }
+}
+

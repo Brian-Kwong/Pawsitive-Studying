@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { getUserTasks, addUserTask } from "./user.js";
+import { getUserTasks, addUserTask, getUserUsername } from "./user.js";
 import {
     registerUser,
     loginUser,
@@ -106,6 +106,23 @@ app.get("/user/:id", (req, res) => {
         });
 });
 
+// Brent
+// ADD ENDPOINTS FOR SETTINGS
+// ACTUAL GET to get user from database
+// Edit with new data
+// Object.save to update
+
+// Name
+app.get("/users/:name", authenticateUser, getUserName);
+app.post("/users/:name", authenticateUser, addUserName);
+// Username
+app.get("/users/:username", authenticateUser, getUserUsername);
+app.post("/users/:username", authenticateUser, addUserUsername);
+// Email
+app.get("/users/:email", authenticateUser, getUserEmail);
+app.post("/users/:email", authenticateUser, addUserEmail);
+
 app.listen(port, () => {
     console.log(`REST API  is listening at ${port}`);
 });
+
