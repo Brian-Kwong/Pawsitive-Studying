@@ -57,7 +57,7 @@ async function newPlaylist(playlistID, playlists) {
             album: playlistName,
             artwork: pl.artistCoverURL,
             headers: {
-                Authorization: `OAuth 2-295991-308098488-GhuX8stsw0qvqi`,
+                Authorization: `OAuth ${process.env.EXPO_PUBLIC_SOUND_CLOUD_API}`,
             },
         };
     });
