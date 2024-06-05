@@ -8,17 +8,25 @@
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
+        "owner": "pawsitive-studying",
         "splash": {
             "image": "./assets/splash.png",
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
-        "assetBundlePatterns": ["**/*"],
+        "assetBundlePatterns": [
+            "**/*"
+        ],
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.tigerplayspc.PawsitiveStudying",
             "config": {
                 "usesNonExemptEncryption": false
+            },
+            "infoPlist": {
+                "UIBackgroundModes": [
+                    "audio"
+                ]
             }
         },
         "android": {

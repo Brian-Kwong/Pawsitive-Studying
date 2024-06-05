@@ -6,6 +6,16 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { logInWithFaceID, logInWithPassword } from "./security.js";
 import * as SecureStore from "expo-secure-store";
+import TrackPlayer from 'react-native-track-player';
+import playerService from './player-service.js';
+
+// 在组件外部初始化 Track Player
+TrackPlayer.setupPlayer().then(() => {
+    console.log('Track Player has been setup');
+});
+
+TrackPlayer.registerPlaybackService(() => playerService);
+
 
 export default function Welcome() {
     /* Checks if they are logged in */
