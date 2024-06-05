@@ -27,7 +27,7 @@ export default function editSettings() {
         try {
             const token = await SecureStore.getItemAsync("Token");
             const userID = await getID();
-            let response = await fetch(`${baseURL}/users/${userID}`, {
+            let response = await fetch(`${baseURL}user/${userID}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -48,10 +48,12 @@ export default function editSettings() {
                 }
                 return;
             } else {
+                console.log(response.status);
                 alert("Error fetching user data");
                 return;
             }
         } catch (error) {
+            console.log(error);
             alert("Error fetching user data");
             return;
         }
@@ -157,7 +159,7 @@ export default function editSettings() {
     }
 
     useEffect(() => {
-        //getUserData();
+        getUserData();
     }, []);
 
     return (
@@ -166,68 +168,29 @@ export default function editSettings() {
             <TextInput
                 style={styles.TextInput}
                 placeholder={user.name}
-                onEndEditing={(event) =>
-                    setUser({
-                        name: event.nativeEvent.text,
-                        username: user.username,
-                        email: user.email,
-                    })
-                }
-                onSubmitEditing={(event) =>
-                    setUser({
-                        name: event.nativeEvent.text,
-                        username: user.username,
-                        email: user.email,
-                    })
-                }
+                onEndEditing={(event) => updateName(event.nativeEvent.text)}
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder={user.username}
-                onEndEditing={(event) =>
-                    setUser({
-                        name: user.name,
-                        username: event.nativeEvent.text,
-                        email: user.email,
-                    })
-                }
-                onSubmitEditing={(event) =>
-                    setUser({
-                        name: user.name,
-                        username: event.nativeEvent.text,
-                        email: user.email,
-                    })
-                }
+                onEndEditing={(event) => updateUsername(event.nativeEvent.text)}
             />
             <TextInput
                 style={styles.TextInput}
                 placeholder={user.email}
-                onEndEditing={(event) =>
-                    setUser({
-                        name: user.name,
-                        username: user.username,
-                        email: event.nativeEvent.text,
-                    })
-                }
-                onSubmitEditing={(event) =>
-                    setUser({
-                        name: user.name,
-                        username: user.username,
-                        email: event.nativeEvent.text,
-                    })
-                }
+                onEndEditing={(event) => updateEmail(event.nativeEvent.text)}
             />
             <TouchableOpacity
                 style={styles.Button}
                 onPress={() => {
                     if (user.username !== "") {
-                        sendPasswordResetRequest(username)
+                        sendPasswordResetRequest(user.username)
                             .then((response) => {
                                 console.log(response);
                                 router.replace({
                                     pathname: "/passwordReset2",
                                     params: {
-                                        username: username,
+                                        username: user.username,
                                         msg: response,
                                     },
                                 });
