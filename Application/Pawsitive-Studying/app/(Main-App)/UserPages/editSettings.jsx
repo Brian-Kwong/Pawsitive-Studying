@@ -2,11 +2,12 @@
 // Make boxes name email username button (password)
 // Make endpoints to change everything new file in the backend
 import { TouchableOpacity, Text, View, TextInput } from "react-native";
-import { styles } from "../../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { sendPasswordResetRequest, getID } from "../../(Login)/security.js";
+import { textStyles, styles } from "../../../Styles/comp_styles.jsx";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/";
 
@@ -156,65 +157,92 @@ export default function editSettings() {
     }
 
     useEffect(() => {
-        getUserData();
+        //getUserData();
     }, []);
 
-    <View style={styles.topContainer}>
-        <Text style={styles.textHeader}>Edit User</Text>
-        <TextInput
-            style={styles.TextInput}
-            placeholder={user.name}
-            onEndEditing={(event) =>
-                setUser({
-                    name: event.nativeEvent.text,
-                    username: user.username,
-                    email: user.email,
-                })
-            }
-            onSubmitEditing={(event) =>
-                setUser({
-                    name: event.nativeEvent.text,
-                    username: user.username,
-                    email: user.email,
-                })
-            }
-        />
-        <TextInput
-            style={styles.TextInput}
-            placeholder={user.username}
-            onEndEditing={(event) =>
-                setUser({
-                    name: user.name,
-                    username: event.nativeEvent.text,
-                    email: user.email,
-                })
-            }
-            onSubmitEditing={(event) =>
-                setUser({
-                    name: user.name,
-                    username: event.nativeEvent.text,
-                    email: user.email,
-                })
-            }
-        />
-        <TextInput
-            style={styles.TextInput}
-            placeholder={user.email}
-            onEndEditing={(event) =>
-                setUser({
-                    name: user.name,
-                    username: user.username,
-                    email: event.nativeEvent.text,
-                })
-            }
-            onSubmitEditing={(event) =>
-                setUser({
-                    name: user.name,
-                    username: user.username,
-                    email: event.nativeEvent.text,
-                })
-            }
-        />
-        <StatusBar style="auto" />
-    </View>;
+    return (
+        <View style={styles.container}>
+            <Text style={styles.textHeader}>Edit User</Text>
+            <TextInput
+                style={styles.TextInput}
+                placeholder={user.name}
+                onEndEditing={(event) =>
+                    setUser({
+                        name: event.nativeEvent.text,
+                        username: user.username,
+                        email: user.email,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        name: event.nativeEvent.text,
+                        username: user.username,
+                        email: user.email,
+                    })
+                }
+            />
+            <TextInput
+                style={styles.TextInput}
+                placeholder={user.username}
+                onEndEditing={(event) =>
+                    setUser({
+                        name: user.name,
+                        username: event.nativeEvent.text,
+                        email: user.email,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        name: user.name,
+                        username: event.nativeEvent.text,
+                        email: user.email,
+                    })
+                }
+            />
+            <TextInput
+                style={styles.TextInput}
+                placeholder={user.email}
+                onEndEditing={(event) =>
+                    setUser({
+                        name: user.name,
+                        username: user.username,
+                        email: event.nativeEvent.text,
+                    })
+                }
+                onSubmitEditing={(event) =>
+                    setUser({
+                        name: user.name,
+                        username: user.username,
+                        email: event.nativeEvent.text,
+                    })
+                }
+            />
+            <TouchableOpacity
+                style={styles.Button}
+                onPress={() => {
+                    if (user.username !== "") {
+                        sendPasswordResetRequest(username)
+                            .then((response) => {
+                                console.log(response);
+                                router.replace({
+                                    pathname: "/passwordReset2",
+                                    params: {
+                                        username: username,
+                                        msg: response,
+                                    },
+                                });
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    } else {
+                        alert("No username entered");
+                    }
+                }}
+            >
+                <Text style={textStyles.textBody}>Reset Password</Text>
+            </TouchableOpacity>
+            <StatusBar style="auto" />
+        </View>
+    );
 }
