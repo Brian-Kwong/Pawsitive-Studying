@@ -266,7 +266,7 @@ export async function addUserEmail(req, res) {
     }
 }
 
-export async function addPoints(res, req, next) {
+export async function addPoints(req, res, next) {
     const userId = req.params.id;
     const task = req.body.task;
     const time = req.body.time;
