@@ -192,3 +192,28 @@ export async function addSongToPlaylist(playlistId, song) {
         throw new Error(`Error adding song to playlist: ${error.message}`);
     }
 }
+
+export async function addNewPlaylist(playlist) {
+    const headers = await addAuthHeader({
+        "Content-Type": "application/json",
+    });
+    const userID = await getID();
+    const url = `${baseURL}users/${userID}/playlist`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+            name: playlist.name,
+            description: playlist.description,
+            songs: [],
+        }),
+    });
+    if (response.ok) {
+        const data = await response.json();
+        return data;
+    } else {
+        console.error("Add playlist API error:", response.status);
+        alert("Failed to add playlist");
+        throw new Error(`Failed to add playlist: ${response.statusText}`);
+    }
+}

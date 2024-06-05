@@ -14,7 +14,11 @@ import DropDownPicker from "react-native-dropdown-picker";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "expo-router";
 import { textStyles } from "../../../Styles/comp_styles.jsx";
-import { searchSongs, addSongToPlaylist } from "../UserPages/requests.js";
+import {
+    searchSongs,
+    addSongToPlaylist,
+    addNewPlaylist,
+} from "../UserPages/requests.js";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
@@ -29,8 +33,43 @@ const MusicPage = () => {
     const [selectedSong, setSelectedSong] = useState(null);
     const [playlists, setPlaylists] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modal2Visible, setModal2Visible] = useState(false);
+    const [newPlaylist, setNewPlaylist] = useState({
+        name: "",
+        description: "",
+    });
 
     const navigation = useNavigation();
+
+    const fetchPlaylist = async () => {
+        try {
+            const token = await SecureStore.getItemAsync("Token");
+            const user_id = await SecureStore.getItemAsync("user_id");
+            const response = await fetch(
+                `${baseURL}/users/${user_id}/playlists`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            const data = await response.json();
+            console.log("Fetched Playlists:", data);
+            setPlaylist(data);
+            setPlaylists(data.map((pl) => ({ label: pl.name, value: pl._id })));
+            const randomPlaylist =
+                data[Math.floor(Math.random() * data.length)];
+            setSongRecommendation(
+                randomPlaylist.songs[
+                    Math.floor(Math.random() * randomPlaylist.songs.length)
+                ]
+            );
+        } catch (error) {
+            console.error("Error fetching playlist:", error);
+        }
+    };
 
     useEffect(() => {
         navigation.setOptions({
@@ -38,38 +77,6 @@ const MusicPage = () => {
             textStyles: textStyles.textHeader,
             headerBackTitle: "Back",
         });
-
-        const fetchPlaylist = async () => {
-            try {
-                const token = await SecureStore.getItemAsync("Token");
-                const user_id = await SecureStore.getItemAsync("user_id");
-                const response = await fetch(
-                    `${baseURL}/users/${user_id}/playlists`,
-                    {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                const data = await response.json();
-                console.log("Fetched Playlists:", data);
-                setPlaylist(data);
-                setPlaylists(
-                    data.map((pl) => ({ label: pl.name, value: pl._id }))
-                );
-                const randomPlaylist =
-                    data[Math.floor(Math.random() * data.length)];
-                setSongRecommendation(
-                    randomPlaylist.songs[
-                        Math.floor(Math.random() * randomPlaylist.songs.length)
-                    ]
-                );
-            } catch (error) {
-                console.error("Error fetching playlist:", error);
-            }
-        };
         fetchPlaylist();
     }, []);
 
@@ -84,6 +91,21 @@ const MusicPage = () => {
             setSearchResults(results);
         } catch (error) {
             console.error("Error searching songs:", error);
+        }
+    };
+
+    const handleNewPlaylist = async () => {
+        try {
+            if (newPlaylist.name !== "") {
+                let newPlaylistData = await addNewPlaylist(newPlaylist);
+                setPlaylist([...playlists, newPlaylistData]);
+                setNewPlaylist({ name: "", description: "" });
+                setModal2Visible(false);
+                alert("Playlist added successfully");
+            }
+        } catch (err) {
+            console.error("Error creating playlist", err);
+            alert("Error creating playlist");
         }
     };
 
@@ -123,6 +145,12 @@ const MusicPage = () => {
             />
             <TouchableOpacity style={styles.button} onPress={handleSearch}>
                 <Text style={styles.buttonText}>Search</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.button}
+                onPress={() => setModal2Visible(true)}
+            >
+                <Text style={styles.buttonText}>Add New Playlist</Text>
             </TouchableOpacity>
             {songRecommendation && (
                 <View style={styles.recommendationContainer}>
@@ -185,6 +213,43 @@ const MusicPage = () => {
                     <Button
                         title="Cancel"
                         onPress={() => setModalVisible(false)}
+                    />
+                </View>
+            </Modal>
+            <Modal
+                visible={modal2Visible}
+                animationType="slide"
+                onRequestClose={() => setModal2Visible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>Make a new Playlist</Text>
+                    <TextInput
+                        style={styles.TextInput}
+                        placeholder="Playlist Name"
+                        onEndEditing={(event) =>
+                            setNewPlaylist({
+                                name: event.nativeEvent.text,
+                                description: newPlaylist.description,
+                            })
+                        }
+                    />
+                    <TextInput
+                        style={styles.TextInput}
+                        placeholder="Playlist Description"
+                        onEndEditing={(event) =>
+                            setNewPlaylist({
+                                name: newPlaylist.name,
+                                description: event.nativeEvent.text,
+                            })
+                        }
+                    />
+                    <Button
+                        title="Add Playlist"
+                        onPress={() => handleNewPlaylist()}
+                    />
+                    <Button
+                        title="Cancel"
+                        onPress={() => setModal2Visible(false)}
                     />
                 </View>
             </Modal>
@@ -266,6 +331,16 @@ const styles = StyleSheet.create({
     buttonText: {
         color: "white",
         fontWeight: "bold",
+    },
+    TextInput: {
+        backgroundColor: "#F0F5FA",
+        marginTop: "3%",
+        marginBottom: "3%",
+        textAlign: "center",
+        width: "50%",
+        padding: "3% 3% 3% 3%",
+        borderRadius: 10,
+        borderWidth: 1,
     },
 });
 
