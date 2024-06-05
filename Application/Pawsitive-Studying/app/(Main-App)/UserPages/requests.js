@@ -92,15 +92,19 @@ export async function editUserTask(editTask) {
     }
 }
 
-export async function completeUserTask(taskId) {
+export async function completeUserTask(taskId, time) {
     try {
         const user_id = await SecureStore.getItemAsync("user_id");
-        const url = `${baseURL}users/${user_id}/tasks/${taskId}/completed`;
+        const url = `${baseURL}users/${user_id}/addPoints`;
 
         const response = await fetch(url, {
-            method: "put",
+            method: "PUT",
             headers: addAuthHeader({
                 "Content-Type": "application/json",
+            }),
+            body: JSON.stringify({
+                task: taskId === undefined ? "None" : taskId,
+                time: time,
             }),
         });
 
