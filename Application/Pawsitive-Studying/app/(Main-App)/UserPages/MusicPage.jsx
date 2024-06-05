@@ -7,11 +7,14 @@ import {
     FlatList,
     TouchableOpacity,
     TextInput,
+    Modal,
+    Button,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "expo-router";
 import { textStyles } from "../../../Styles/comp_styles.jsx";
+import { searchSongs, addSongToPlaylist } from "./requests";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
@@ -21,10 +24,15 @@ const MusicPage = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [selectedSong, setSelectedSong] = useState(null);
+    const [playlists, setPlaylists] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+
     const navigation = useNavigation();
 
     useEffect(() => {
-        // Fetch the playlist data from the backend
         navigation.setOptions({
             title: "Music",
             textStyles: textStyles.textHeader,
@@ -33,11 +41,10 @@ const MusicPage = () => {
 
         const fetchPlaylist = async () => {
             try {
-                const token =
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik1lb3cgTWVvdyIsImlhdCI6MTcxNjg2NTU0MiwiZXhwIjoxNzE2OTUxOTQyfQ.yxcpD0yvtaMpQRgze7XprzuIl5HURrtku-a6XvV_lQA";
-                const id = "6651bda8a81d7a3914e05f81";
+                const token = await SecureStore.getItemAsync("Token");
+                const user_id = await SecureStore.getItemAsync("user_id");
                 const response = await fetch(
-                    `${baseURL}/users/${id}/playlists`,
+                    `${baseURL}/users/${user_id}/playlists`,
                     {
                         method: "GET",
                         headers: {
@@ -47,16 +54,18 @@ const MusicPage = () => {
                     }
                 );
                 const data = await response.json();
-                console.log("Data", data);
+                console.log("Fetched Playlists:", data);
                 setPlaylist(data);
+                setPlaylists(
+                    data.map((pl) => ({ label: pl.name, value: pl._id }))
+                );
                 const randomPlaylist =
                     data[Math.floor(Math.random() * data.length)];
                 setSongRecommendation(
                     randomPlaylist.songs[
                         Math.floor(Math.random() * randomPlaylist.songs.length)
                     ]
-                ); // Set a random song as the daily recommendation
-                console.log("Playlist", playlist);
+                );
             } catch (error) {
                 console.error("Error fetching playlist:", error);
             }
@@ -64,10 +73,57 @@ const MusicPage = () => {
         fetchPlaylist();
     }, []);
 
+    const handleSearch = async () => {
+        if (!searchTerm) {
+            return;
+        }
+        try {
+            console.log("Searching for:", searchTerm);
+            const results = await searchSongs(searchTerm);
+            console.log("Search results:", results);
+            setSearchResults(results);
+        } catch (error) {
+            console.error("Error searching songs:", error);
+        }
+    };
+
+    const handleAddSong = async () => {
+        if (!selectedSong || !selectedPlaylist) return;
+
+        try {
+            console.log(
+                "Adding song to playlist:",
+                selectedSong,
+                selectedPlaylist
+            );
+            const response = await addSongToPlaylist(
+                selectedPlaylist,
+                selectedSong
+            );
+            if (response) {
+                console.log("Song added successfully:", response);
+                alert("Song added successfully");
+                setSelectedSong(null);
+                setSelectedPlaylist(null);
+                setModalVisible(false);
+            }
+        } catch (error) {
+            console.error("Error adding song to playlist:", error);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Music</Text>
-            <TextInput style={styles.searchBar} placeholder="Search" />
+            <TextInput
+                style={styles.searchBar}
+                value={searchTerm}
+                onChangeText={setSearchTerm}
+                placeholder="Search for a song"
+            />
+            <TouchableOpacity style={styles.button} onPress={handleSearch}>
+                <Text style={styles.buttonText}>Search</Text>
+            </TouchableOpacity>
             {songRecommendation && (
                 <View style={styles.recommendationContainer}>
                     <Image
@@ -86,30 +142,52 @@ const MusicPage = () => {
                     </Text>
                 </View>
             )}
-            <DropDownPicker
-                open={dropdownOpen}
-                value={selectedPlaylist}
-                items={playlist.map((song) => ({
-                    label: song.name,
-                    value: song._id,
-                }))}
-                setOpen={setDropdownOpen}
-                setValue={setSelectedPlaylist}
-                placeholder="Select a playlist"
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownList}
-                onChangeValue={(value) => console.log(value)}
-            />
             <FlatList
-                data={playlist}
-                keyExtractor={(item) => item._id}
+                data={searchResults}
+                keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <View style={styles.songItem}>
-                        <Text style={styles.songText}>{item.name}</Text>
-                    </View>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setSelectedSong(item);
+                            setModalVisible(true);
+                        }}
+                    >
+                        <View style={styles.songItem}>
+                            <Text style={styles.songTitle}>
+                                {item.songName.length > 40
+                                    ? item.songName.substring(0, 40) + "..."
+                                    : item.songName}
+                            </Text>
+                            <Text style={styles.songArtist}>{item.artist}</Text>
+                        </View>
+                    </TouchableOpacity>
                 )}
             />
+            <Modal
+                visible={modalVisible}
+                animationType="slide"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>Select Playlist</Text>
+                    <DropDownPicker
+                        open={dropdownOpen}
+                        value={selectedPlaylist}
+                        items={playlists}
+                        setOpen={setDropdownOpen}
+                        setValue={setSelectedPlaylist}
+                        placeholder="Select a playlist"
+                        containerStyle={styles.dropdownContainer}
+                        style={styles.dropdown}
+                        dropDownContainerStyle={styles.dropdownList}
+                    />
+                    <Button title="Add to Playlist" onPress={handleAddSong} />
+                    <Button
+                        title="Cancel"
+                        onPress={() => setModalVisible(false)}
+                    />
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -168,8 +246,26 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#ccc",
     },
-    songText: {
-        fontSize: 16,
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 20,
+    },
+    button: {
+        backgroundColor: "blue",
+        padding: 10,
+        alignItems: "center",
+        marginBottom: 10,
+    },
+    buttonText: {
+        color: "white",
+        fontWeight: "bold",
     },
 });
 

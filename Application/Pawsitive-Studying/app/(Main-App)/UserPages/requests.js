@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
+import { getID } from "../../(Login)/security.js";
 
-const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
-
+const baseURL = "https://studybuddyserver.azurewebsites.net/";
 
 function addAuthHeader(otherHeaders = {}) {
     const userToken = SecureStore.getItem("Token");
@@ -15,55 +15,56 @@ function addAuthHeader(otherHeaders = {}) {
     }
 }
 
-export async function fetchUserTasks() {
+export async function searchSongs(query) {
     try {
-        const user_id = await SecureStore.getItemAsync("user_id");
+        const headers = await addAuthHeader({
+            "Content-Type": "application/json",
+        });
 
-        const url = baseURL + "users/" + user_id + "/tasks";
-
+        const url = `${baseURL}searchSong?songName=${query}`;
         const response = await fetch(url, {
-            method: "get",
-            headers: addAuthHeader({
-                "Content-Type": "application/json",
-            }),
+            method: "GET",
+            headers: headers,
         });
 
         if (response.ok) {
             const data = await response.json();
             return data;
         } else {
-            throw new Error(
-                `Failed to fetch user tasks: ${response.statusText}`
-            );
+            console.error("Search API error:", response.status);
+            throw new Error(`Failed to search songs: ${response.statusText}`);
         }
     } catch (error) {
-        // 捕获任何可能的错误，并将其抛出
-        throw new Error(`Error fetching user tasks: ${error.message}`);
+        console.error("Error searching songs:", error);
+        throw new Error(`Error searching songs: ${error.message}`);
     }
 }
 
-export async function addUserTask(newTask) {
+export async function addSongToPlaylist(playlistId, song) {
     try {
-        const user_id = await SecureStore.getItemAsync("user_id");
-        const url = baseURL + "users/" + user_id + "/task";
-
+        const headers = await addAuthHeader({
+            "Content-Type": "application/json",
+        });
+        const userID = await getID();
+        const url = `${baseURL}users/${userID}/${playlistId}/song`;
         const response = await fetch(url, {
-            method: "post",
-            headers: addAuthHeader({
-                "Content-Type": "application/json",
-            }),
-            body: JSON.stringify(newTask),
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(song),
         });
 
         if (response.ok) {
             const data = await response.json();
             return data;
         } else {
-            throw new Error(`Failed to add user task: ${response.statusText}`);
+            console.error("Add song to playlist API error:", response.status);
+            throw new Error(
+                `Failed to add song to playlist: ${response.statusText}`
+            );
         }
     } catch (error) {
-        // 捕获任何可能的错误，并将其抛出
-        throw new Error(`Error adding user task: ${error.message}`);
+        console.error("Error adding song to playlist:", error);
+        throw new Error(`Error adding song to playlist: ${error.message}`);
     }
 }
 
@@ -77,16 +78,15 @@ export async function editUserTask(editTask) {
             headers: addAuthHeader({
                 "Content-Type": "application/json",
             }),
-            body: JSON.stringify(editTask)
+            body: JSON.stringify(editTask),
         });
 
-        if(response.ok) {
+        if (response.ok) {
             const data = await response.json();
             return data;
-        } else{
+        } else {
             throw new Error(`Failed to edit user task: ${response.status}`);
         }
-
     } catch (error) {
         throw new Error(`Error editing task: ${error.message}`);
     }
@@ -101,22 +101,18 @@ export async function completeUserTask(taskId) {
             method: "put",
             headers: addAuthHeader({
                 "Content-Type": "application/json",
-            })
-        })
+            }),
+        });
 
-
-        if(response.ok) {
-            return response
-        } else{
+        if (response.ok) {
+            return response;
+        } else {
             throw new Error(`Failed to edit user task: ${response.status}`);
         }
-
-
-    } catch(error){
+    } catch (error) {
         throw new Error(`Error complete task: ${error.message}`);
     }
 }
-
 
 export async function deleteUserTask(taskId) {
     try {
@@ -131,7 +127,7 @@ export async function deleteUserTask(taskId) {
         });
 
         if (response.ok) {
-            return response
+            return response;
         } else {
             throw new Error(`Failed to delete task: ${response.statusText}`);
         }
