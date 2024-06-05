@@ -14,7 +14,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "expo-router";
 import { textStyles } from "../../../Styles/comp_styles.jsx";
-import { searchSongs, addSongToPlaylist } from './requests';
+import { searchSongs, addSongToPlaylist } from "./requests";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
@@ -28,8 +28,6 @@ const MusicPage = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [selectedSong, setSelectedSong] = useState(null);
     const [playlists, setPlaylists] = useState([]);
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
     const navigation = useNavigation();
@@ -53,6 +51,7 @@ const MusicPage = () => {
                     },
                 });
                 const data = await response.json();
+                console.log("Fetched Playlists:", data);
                 setPlaylist(data);
                 setPlaylists(data.map(pl => ({ label: pl.name, value: pl._id })));
                 const randomPlaylist = data[Math.floor(Math.random() * data.length)];
@@ -65,19 +64,34 @@ const MusicPage = () => {
     }, []);
 
     const handleSearch = async () => {
-        const results = await searchSongs(searchTerm);
-        setSearchResults(results);
+        if (!searchTerm) {
+            return;
+        }
+        try {
+            console.log('Searching for:', searchTerm);
+            const results = await searchSongs(searchTerm);
+            console.log('Search results:', results);
+            setSearchResults(results);
+        } catch (error) {
+            console.error("Error searching songs:", error);
+        }
     };
 
     const handleAddSong = async () => {
         if (!selectedSong || !selectedPlaylist) return;
 
-        const response = await addSongToPlaylist(selectedPlaylist, selectedSong);
-        if (response) {
-            alert('Song added successfully');
-            setSelectedSong(null);
-            setSelectedPlaylist(null);
-            setModalVisible(false);
+        try {
+            console.log('Adding song to playlist:', selectedSong, selectedPlaylist);
+            const response = await addSongToPlaylist(selectedPlaylist, selectedSong);
+            if (response) {
+                console.log('Song added successfully:', response);
+                alert('Song added successfully');
+                setSelectedSong(null);
+                setSelectedPlaylist(null);
+                setModalVisible(false);
+            }
+        } catch (error) {
+            console.error("Error adding song to playlist:", error);
         }
     };
 
