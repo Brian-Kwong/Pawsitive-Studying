@@ -7,6 +7,8 @@ import {
     FlatList,
     TouchableOpacity,
     TextInput,
+    Modal,
+    Button,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as SecureStore from "expo-secure-store";
@@ -28,6 +30,7 @@ const MusicPage = () => {
     const [playlists, setPlaylists] = useState([]);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const navigation = useNavigation();
 
@@ -67,13 +70,14 @@ const MusicPage = () => {
     };
 
     const handleAddSong = async () => {
-        if (!selectedSong || !value) return;
+        if (!selectedSong || !selectedPlaylist) return;
 
-        const response = await addSongToPlaylist(value, selectedSong);
+        const response = await addSongToPlaylist(selectedPlaylist, selectedSong);
         if (response) {
             alert('Song added successfully');
             setSelectedSong(null);
-            setValue(null);
+            setSelectedPlaylist(null);
+            setModalVisible(false);
         }
     };
 
@@ -99,45 +103,40 @@ const MusicPage = () => {
                     <Text style={styles.songArtist}>{songRecommendation.artist}</Text>
                 </View>
             )}
-            <DropDownPicker
-                open={dropdownOpen}
-                value={selectedPlaylist}
-                items={playlists}
-                setOpen={setDropdownOpen}
-                setValue={setSelectedPlaylist}
-                placeholder="Select a playlist"
-                containerStyle={styles.dropdownContainer}
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownList}
-            />
             <FlatList
-                data={playlist}
-                keyExtractor={item => item._id}
+                data={searchResults}
+                keyExtractor={item => item.id}
                 renderItem={({ item }) => (
-                    <View style={styles.songItem}>
-                        <Text style={styles.songText}>{item.name}</Text>
-                    </View>
+                    <TouchableOpacity onPress={() => { setSelectedSong(item); setModalVisible(true); }}>
+                        <View style={styles.songItem}>
+                            <Text style={styles.songTitle}>{item.title}</Text>
+                            <Text style={styles.songArtist}>{item.artist}</Text>
+                        </View>
+                    </TouchableOpacity>
                 )}
             />
-            {selectedSong && (
-                <View style={styles.dropdownContainer}>
+            <Modal
+                visible={modalVisible}
+                animationType="slide"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>Select Playlist</Text>
                     <DropDownPicker
-                        open={open}
-                        value={value}
+                        open={dropdownOpen}
+                        value={selectedPlaylist}
                         items={playlists}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setPlaylists}
+                        setOpen={setDropdownOpen}
+                        setValue={setSelectedPlaylist}
                         placeholder="Select a playlist"
-                        containerStyle={{ height: 40 }}
-                        style={{ backgroundColor: "#fafafa" }}
-                        dropDownStyle={{ backgroundColor: "#fafafa" }}
+                        containerStyle={styles.dropdownContainer}
+                        style={styles.dropdown}
+                        dropDownContainerStyle={styles.dropdownList}
                     />
-                    <TouchableOpacity style={styles.button} onPress={handleAddSong}>
-                        <Text style={styles.buttonText}>Add to Playlist</Text>
-                    </TouchableOpacity>
+                    <Button title="Add to Playlist" onPress={handleAddSong} />
+                    <Button title="Cancel" onPress={() => setModalVisible(false)} />
                 </View>
-            )}
+            </Modal>
         </View>
     );
 };
@@ -196,8 +195,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#ccc",
     },
-    songText: {
-        fontSize: 16,
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 20,
     },
     button: {
         backgroundColor: 'blue',

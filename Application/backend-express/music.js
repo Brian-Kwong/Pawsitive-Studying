@@ -8,9 +8,9 @@ dotenv.config();
 const soundCloudAPIKey = process.env.SOUNDCLOUD_API_KEY;
 const soundCloudURL = "https://api-v2.soundcloud.com/search/tracks";
 
-//Function to search songs from SoundCloud
+// Function to search songs from SoundCloud
 export async function searchSongs(req, res) {
-    const searchTerm = req.query.searchTerm;
+    const searchTerm = req.query.q; // Ensure the query parameter is named correctly
     const url = `${soundCloudURL}?q=${searchTerm}&access=playable`;
 
     try {
@@ -36,7 +36,6 @@ export async function searchSongs(req, res) {
         res.status(500).json({ error: "Failed to fetch songs" });
     }
 }
-application.get("/searchSong", searchSongs);
 
 // Add Song to Playlist
 export async function addSongToPlaylist(req, res) {
@@ -58,9 +57,6 @@ export async function addSongToPlaylist(req, res) {
         res.status(500).json({ error: "Failed to add song to playlist" });
     }
 }
-
-application.post("/addSongToPlaylist", addSongToPlaylist);
-
 
 
 // Get playlists
