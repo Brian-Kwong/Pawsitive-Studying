@@ -93,15 +93,6 @@ export default function Home() {
                             <MaterialIcons name="done" color="#fff" size={22} />
                         </Pressable> */}
                         <TextInput
-                            style={styles.inputModal}
-                            // Task Entry Button
-                            // CENTER of Modal
-                            placeholder="Enter Task"
-                            placeholderTextColor="#888"
-                            onChangeText={(text) => setInputText(text)}
-                            value={inputText}
-                        />
-                        <TextInput
                             // Set Time Duration Button
                             // BOTTOM LEFT Modal
                             style={styles.inputModal}

@@ -8,6 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { sendPasswordResetRequest, getID } from "../../(Login)/security.js";
 import { textStyles, styles } from "../../../Styles/comp_styles.jsx";
+import { useNavigation } from "expo-router";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/";
 
@@ -22,6 +23,15 @@ export default function editSettings() {
         username: "",
         email: "",
     });
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: "User Profile Edit",
+            textStyles: textStyles.textHeader,
+        });
+    }, [navigation]);
 
     async function getUserData() {
         try {

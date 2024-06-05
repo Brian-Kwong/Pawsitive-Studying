@@ -139,12 +139,12 @@ export default function Users() {
                         onPress={() => {
                             // Do something
                             router.push({
-                                pathname: "../UserPages/MusicPage",
-                                title: "Music",
+                                pathname: "../UserPages/completedTasks",
+                                title: "Completed Tasks",
                             });
                         }}
                     >
-                        <Text style={styles.textBody}>Music</Text>
+                        <Text style={styles.textBody}>Completed Tasks</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.LongButton}
