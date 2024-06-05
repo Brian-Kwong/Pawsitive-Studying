@@ -13,6 +13,7 @@ import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { default_image } from "../UserPages/default_image.js";
 import { useEffect, useState } from "react";
+import { getID } from "../../(Login)/security.js";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/";
 const blurhash =
@@ -27,7 +28,7 @@ export default function Users() {
             const token = await SecureStore.getItemAsync("Token");
             const userID = await getID();
             let response = await fetch(
-                `${baseURL}/users/${userID}/profilePicture`,
+                `${baseURL}/users/${userID}/profileImage`,
                 {
                     method: "GET",
                     headers: {
@@ -38,8 +39,10 @@ export default function Users() {
             );
             if (response.ok) {
                 let data = await response.json();
-                if (data != null) {
-                    setProfilePictureImage(data.image);
+                if (data != null || data.profileImage != "None") {
+                    setProfilePictureImage(data.profileImage);
+                } else if (data.profileImage == "None") {
+                    return;
                 } else {
                     alert("Failed to fetch user data");
                     return;
@@ -55,55 +58,49 @@ export default function Users() {
         }
     }
 
+    useEffect(() => {
+        getProfilePicture();
+    }, []);
+
     async function updateProfilePicture() {
         let image = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Image,
             allowsEditing: true,
-            aspect: [4, 3],
-            quality: 0.2,
+            aspect: [1, 3],
+            quality: 0,
             base64: true,
         });
         if (!image.cancelled) {
-            image = image.assets[0].base64
-                ? image.assets[0].base64
-                : default_image;
-            setProfilePictureImage(image);
+            image = image.assets[0].base64;
+            try {
+                const token = await SecureStore.getItemAsync("Token");
+                const userID = await getID();
+                let response = await fetch(
+                    `${baseURL}/users/${userID}/profileImage`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                            profileImage: image,
+                        }),
+                    }
+                );
+                if (response.ok) {
+                    setProfilePictureImage(image);
+                    return;
+                } else {
+                    console.log(response.status);
+                    alert("Error updating image");
+                    return;
+                }
+            } catch (error) {
+                alert("Error updating image");
+                return;
+            }
         }
-        // try {
-        //     const token = await SecureStore.getItemAsync("Token");
-        //     const userID = await getID();
-        //     let response = await fetch(
-        //         `${baseURL}/users/${userID}/profilePicture`,
-        //         {
-        //             method: "PUT",
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //                 Authorization: `Bearer ${token}`,
-        //             },
-        //             body: JSON.stringify({
-        //                 image: username,
-        //             }),
-        //         }
-        //     );
-        //     if (response.ok) {
-        //         alert("Username updated successfully");
-        //         setUser({
-        //             name: user.name,
-        //             username: username,
-        //             email: user.email,
-        //         });
-        //         return;
-        //     } else if (response.status === 404) {
-        //         alert("Username already exists");
-        //         return;
-        //     } else {
-        //         alert("Error updating username");
-        //         return;
-        //     }
-        // } catch (error) {
-        //     alert("Error updating username");
-        //     return;
-        // }
     }
 
     return (
