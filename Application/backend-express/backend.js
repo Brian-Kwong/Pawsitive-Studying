@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { getUserTasks, addUserTask, getUserUsername } from "./user.js";
+import { getUserTasks, addUserTask, getUserUsername, getUserProfileImage, addUserProfileImage } from "./user.js";
 import {
     registerUser,
     loginUser,
@@ -114,13 +114,16 @@ app.get("/user/:id", (req, res) => {
 
 // Name
 app.get("/users/:id", authenticateUser, getUserName);
-app.post("/users/:name", authenticateUser, addUserName);
+app.post("/users/:id/name", authenticateUser, addUserName);
 // Username
 app.get("/users/:id", authenticateUser, getUserUsername);
-app.post("/users/:username", authenticateUser, addUserUsername);
+app.post("/users/:id/username", authenticateUser, addUserUsername);
 // Email
 app.get("/users/:id", authenticateUser, getUserEmail);
-app.post("/users/:email", authenticateUser, addUserEmail);
+app.post("/users/:id/email", authenticateUser, addUserEmail);
+// Profile Picture
+app.get("/users/:id", authenticateUser, getUserProfileImage);
+app.post("/users/:id/profileImage", authenticateUser, addUserProfileImage);
 
 app.listen(port, () => {
     console.log(`REST API  is listening at ${port}`);
