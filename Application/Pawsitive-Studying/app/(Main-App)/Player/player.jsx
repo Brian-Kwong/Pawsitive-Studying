@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
@@ -32,6 +32,7 @@ async function setupTrack() {
 
 
 const MusicPlayer = () => {
+    const [isPlaying, setIsPlaying] = useState(false);
 
 
     useEffect(() => {
@@ -48,6 +49,15 @@ const MusicPlayer = () => {
     const pause = async () => await TrackPlayer.pause();
     const skipToNext = async () => await TrackPlayer.skipToNext();
     const skipToPrevious = async () => await TrackPlayer.skipToPrevious();
+
+    const togglePlayPause = () => {
+        setIsPlaying(!isPlaying);
+        if (isPlaying) {
+            pause();
+        } else {
+            play();
+        }
+    }
 
 
     return (
@@ -70,14 +80,14 @@ const MusicPlayer = () => {
                     thumbTintColor="#1FB28A"
                 />
                 <View style={styles.controls}>
+                    <TouchableOpacity onPress={() => { console.log("Open play-list") }}>
+                        <MaterialIcons name="playlist-play" size={24} color="black" />
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={skipToPrevious}>
                         <MaterialIcons name="skip-previous" size={24} color="black" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={play}>
-                        <MaterialIcons name="play-arrow" size={24} color="black" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={pause}>
-                        <MaterialIcons name="pause" size={24} color="black" />
+                    <TouchableOpacity onPress={togglePlayPause}>
+                        <MaterialIcons name={isPlaying ? "pause" : "play-arrow"} size={24} color="black" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={skipToNext}>
                         <MaterialIcons name="skip-next" size={24} color="black" />
