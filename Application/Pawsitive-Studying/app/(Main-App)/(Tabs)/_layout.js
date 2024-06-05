@@ -31,14 +31,14 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="calander"
+                name="music"
                 style={styles.TabsButton}
                 options={{
-                    title: "Calendar",
+                    title: "Music",
                     tabBarActiveTintColor: tabBarIconColor,
                     tabBarInactiveTintColor: inactiveTabIconColor,
                     tabBarIcon: ({ color, size }) => (
-                        <FontAwesome name="list" size={size} color={color} />
+                        <FontAwesome name="music" size={size} color={color} />
                     ),
                 }}
             />

@@ -138,41 +138,6 @@ export default function Users() {
                         style={styles.LongButton}
                         onPress={() => {
                             // Do something
-                        }}
-                    >
-                        <Text style={styles.textBody}>
-                            Manage Study Preferences
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.LongButton}
-                        onPress={() => {
-                            router.push("/manage-study-preferences");
-                        }}
-                    >
-                        <Text style={styles.textBody}>Manage Courses</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.LongButton}
-                        onPress={() => {
-                            router.push("/manage-courses");
-                        }}
-                    >
-                        <Text style={styles.textBody}>Manage Courses</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.LongButton}
-                        onPress={() => {
-                            // Do something
-                            router.push("/calendar");
-                        }}
-                    >
-                        <Text style={styles.textBody}>Calander</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.LongButton}
-                        onPress={() => {
-                            // Do something
                             router.push({
                                 pathname: "../UserPages/MusicPage",
                                 title: "Music",

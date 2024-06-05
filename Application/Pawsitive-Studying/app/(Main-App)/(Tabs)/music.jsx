@@ -14,7 +14,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "expo-router";
 import { textStyles } from "../../../Styles/comp_styles.jsx";
-import { searchSongs, addSongToPlaylist } from "./requests";
+import { searchSongs, addSongToPlaylist } from "../UserPages/requests.js";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
