@@ -2,7 +2,6 @@ import * as SecureStore from "expo-secure-store";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
-
 function addAuthHeader(otherHeaders = {}) {
     const userToken = SecureStore.getItem("Token");
     if (userToken != null) {
@@ -77,46 +76,45 @@ export async function editUserTask(editTask) {
             headers: addAuthHeader({
                 "Content-Type": "application/json",
             }),
-            body: JSON.stringify(editTask)
+            body: JSON.stringify(editTask),
         });
 
-        if(response.ok) {
+        if (response.ok) {
             const data = await response.json();
             return data;
-        } else{
+        } else {
             throw new Error(`Failed to edit user task: ${response.status}`);
         }
-
     } catch (error) {
         throw new Error(`Error editing task: ${error.message}`);
     }
 }
 
-export async function completeUserTask(taskId) {
+export async function completeUserTask(taskId, time) {
     try {
         const user_id = await SecureStore.getItemAsync("user_id");
-        const url = `${baseURL}users/${user_id}/tasks/${taskId}/completed`;
+        const url = `${baseURL}users/${user_id}/addPoints`;
 
         const response = await fetch(url, {
-            method: "put",
+            method: "PUT",
             headers: addAuthHeader({
                 "Content-Type": "application/json",
-            })
-        })
+            }),
+            body: JSON.stringify({
+                task: taskId === undefined ? "None" : taskId,
+                time: time,
+            }),
+        });
 
-
-        if(response.ok) {
-            return response
-        } else{
+        if (response.ok) {
+            return response;
+        } else {
             throw new Error(`Failed to edit user task: ${response.status}`);
         }
-
-
-    } catch(error){
+    } catch (error) {
         throw new Error(`Error complete task: ${error.message}`);
     }
 }
-
 
 export async function deleteUserTask(taskId) {
     try {
@@ -131,7 +129,7 @@ export async function deleteUserTask(taskId) {
         });
 
         if (response.ok) {
-            return response
+            return response;
         } else {
             throw new Error(`Failed to delete task: ${response.statusText}`);
         }

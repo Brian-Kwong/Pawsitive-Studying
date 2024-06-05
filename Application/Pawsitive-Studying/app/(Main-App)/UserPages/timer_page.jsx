@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, TouchableOpacity, Text } from 'react-native'
-import { CircularProgress } from 'react-native-circular-progress'
-import MusicPlayer from '../Player/player.jsx'
-import { styles, textStyles } from '../../../Styles/comp_styles.jsx' // Import styles from comp-styles.jsx
-import { useLocalSearchParams, useNavigation } from 'expo-router'
-import {completeUserTask} from "./requests.js"
+import React, { useState, useRef, useEffect } from "react";
+import { View, TouchableOpacity, Text } from "react-native";
+import { CircularProgress } from "react-native-circular-progress";
+import MusicPlayer from "../Player/player.jsx";
+import { styles, textStyles } from "../../../Styles/comp_styles.jsx"; // Import styles from comp-styles.jsx
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { completeUserTask } from "./requests.js";
 
 export default CountdownTimer = () => {
-    const duration = useLocalSearchParams().time
-    const taskId = useLocalSearchParams()._id
+    const duration = useLocalSearchParams().time;
+    const taskId = useLocalSearchParams()._id;
 
     const navigation = useNavigation();
 
@@ -25,10 +25,9 @@ export default CountdownTimer = () => {
     const [progress, setProgress] = useState(100);
     const [isRunning, setIsRunning] = useState(false);
 
-
     async function completeTask() {
         try {
-            const r = await completeUserTask(taskId);
+            const r = await completeUserTask(taskId, duration / 60);
         } catch (error) {
             console.error("Error complete task:", error);
         }
@@ -81,7 +80,7 @@ export default CountdownTimer = () => {
                     <Text style={styles.countdownButtonText}>
                         {isRunning
                             ? "Pause"
-                            : `${duration === remainingTimeSec ? "Start" : "Resume"}`}
+                            : `${duration === remainingTimeSec || remainingTimeSec <= 0 ? "Start" : "Resume"}`}
                     </Text>
                 </TouchableOpacity>
             </View>
