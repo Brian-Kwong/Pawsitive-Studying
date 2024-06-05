@@ -15,6 +15,8 @@ import {
     addUserEmail,
     getUserName,
     addUserName,
+    getUserProfileImage,
+    addUserProfileImage,
 } from "./user.js";
 import { getCharacters, addCharToUser } from "./chracters.js";
 import {
@@ -138,16 +140,16 @@ app.put("/reset-password", resetPassword);
 
 // Name
 app.get("/users/:id/name", authenticateUser, getUserName);
-app.post("/users/:id/name", authenticateUser, addUserName);
+app.put("/users/:id/name", authenticateUser, addUserName);
 // Username
 app.get("/users/:id/username", authenticateUser, getUserUsername);
-app.post("/users/:id/username", authenticateUser, addUserUsername);
+app.put("/users/:id/username", authenticateUser, addUserUsername);
 // Email
 app.get("/users/:id/email", authenticateUser, getUserEmail);
-app.post("/users/:id/email", authenticateUser, addUserEmail);
+app.put("/users/:id/email", authenticateUser, addUserEmail);
 // Profile Picture
 app.get("/users/:id/profileImage", authenticateUser, getUserProfileImage);
-app.post("/users/:id/profileImage", authenticateUser, addUserProfileImage);
+app.put("/users/:id/profileImage", authenticateUser, addUserProfileImage);
 
 // Binds socket to port
 const server = async () =>

@@ -170,10 +170,10 @@ export async function editTasksDetails(req, res) {
 // Name, username, email, password
 export async function getUserName(req, res) {
     // The name the user is looking for
-    const name = req.params.name;
+    const id = req.params.id;
     try {
         // Look in MongoDB for name
-        const user = await User.findByName(name).select("name");
+        const user = await User.findById(id).select("name");
         if (!user) {
             return res.status(404).send("User not found");
         }
@@ -186,10 +186,10 @@ export async function getUserName(req, res) {
 
 export async function getUserUsername(req, res) {
     // The username the user is looking for
-    const username = req.params.username;
+    const id = req.params.id;
     try {
         // Look in MongoDB for name
-        const user = await User.findByUsername(username).select("username");
+        const user = await User.findById(id).select("username");
         if (!user) {
             return res.status(404).send("Username not found");
         }
@@ -202,10 +202,10 @@ export async function getUserUsername(req, res) {
 
 export async function getUserEmail(req, res) {
     // The email the user is looking for
-    const email = req.params.email;
+    const id = req.params.id;
     try {
         // Look in MongoDB
-        const user = await User.findByEmail(email).select("email");
+        const user = await User.findById(id).select("email");
         if (!user) {
             return res.status(404).send("Email not found");
         }
@@ -217,10 +217,11 @@ export async function getUserEmail(req, res) {
 }
 
 export async function addUserName(req, res) {
-    const name = req.params.name;
+    const id = req.params.id;
+    const name = req.body.name;
     try {
-        const user = await User.findByName(name);
-        if (user) {
+        const user = await User.findById(id);
+        if (!user) {
             return res.status(404).send("name already exists");
         }
         // else push the new name
@@ -232,10 +233,11 @@ export async function addUserName(req, res) {
     }
 }
 export async function addUserUsername(req, res) {
-    const username = req.params.username;
+    const id = req.params.id;
+    const username = req.body.username;
     try {
-        const user = await User.findByUsername(username);
-        if (user) {
+        const user = await User.findById(id);
+        if (!user) {
             return res.status(404).send("username already exists");
         }
         // else push the new name
@@ -248,10 +250,11 @@ export async function addUserUsername(req, res) {
 }
 
 export async function addUserEmail(req, res) {
-    const email = req.params.email;
+    const id = req.params.id;
+    const email = req.body.email;
     try {
-        const user = await User.findByEmail(email);
-        if (user) {
+        const user = await User.findById(id);
+        if (!user) {
             return res.status(404).send("email already exists");
         }
         // else push the new name
@@ -264,27 +267,25 @@ export async function addUserEmail(req, res) {
 }
 
 export async function getUserProfileImage(req, res) {
-    const profileImage = req.params.profileImage;
+    const id = req.params.id;
     try {
-        const user = await User.findByProfileImage(profileImage);
-        if (user) {
-            return res.status(404).send("image already exists");
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).send("No user exists");
         }
-        // else push the new name
-        user.profileImage.push(profileImage);
-        await user.save();
-        res.status(201).json(profileImage);
+        return res.status(200).json({ profileImage: user.profileImage });
     } catch (error) {
         res.status(500).send("Server error");
     }
 }
 
 export async function addUserProfileImage(req, res) {
-    const profileImage = req.params.profileImage;
+    const id = req.params.id;
+    const profileImage = req.body.profileImage;
     try {
-        const user = await User.findByProfileImage(profileImage);
-        if (user) {
-            return res.status(404).send("image already exists");
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).send("No user exists");
         }
         // else push the new name
         user.profileImage = profileImage;
