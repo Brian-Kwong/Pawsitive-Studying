@@ -37,6 +37,7 @@ import {
     fetchSongFromSoundCloud,
     getStreamURL,
     findSong,
+    getPlaylistStreamURL,
 } from "./music.js";
 dotenv.config();
 
@@ -117,6 +118,11 @@ app.post("/users/:id/:playlistId/song", authenticateUser, addSong);
 app.get("/searchSong", authenticateUser, fetchSongFromSoundCloud);
 app.get("/song/:id", authenticateUser, findSong);
 app.get("/songs/stream/:songId", authenticateUser, getStreamURL);
+app.get(
+    "/songs/stream/playlist/:playlistId",
+    authenticateUser,
+    getPlaylistStreamURL
+);
 
 // Character endpoints
 app.get("/characters", authenticateUser, getCharacters);

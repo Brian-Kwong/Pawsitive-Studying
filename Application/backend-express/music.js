@@ -58,7 +58,6 @@ export async function addSongToPlaylist(req, res) {
     }
 }
 
-
 // Get playlists
 export async function getPlaylist(req, res) {
     const userId = req.params.id;
@@ -248,6 +247,38 @@ export async function getStreamURL(req, res) {
         } else {
             res.status(500).send("Internal server error");
         }
+    } catch (error) {
+        res.status(400).send("Bad request: Invalid input data.");
+    }
+}
+
+export async function getPlaylistStreamURL(req, res) {
+    try {
+        const playlistID = req.params.playlistId;
+        let songURLs = [];
+        const playlist = await Playlist.findById(playlistID);
+        const playlistSongs = playlist.songs;
+        for (let i = 0; i < playlistSongs.length; i++) {
+            let song = playlistSongs[i];
+            if (song !== null) {
+                let fetchStreamURL = await fetch(song.songURL, {
+                    // fetches the song from the URL
+                    method: "GET",
+                    headers: {
+                        Authorization: `OAuth ${soundCloudAPIKey}`,
+                    },
+                });
+                if (fetchStreamURL.status === 200) {
+                    fetchStreamURL = await fetchStreamURL.json();
+                    songURLs.push(fetchStreamURL.url);
+                } else {
+                    res.status(404).send("Song not found");
+                }
+            } else {
+                res.status(404).send("Song not found");
+            }
+        }
+        res.status(200).json(songURLs);
     } catch (error) {
         res.status(400).send("Bad request: Invalid input data.");
     }
