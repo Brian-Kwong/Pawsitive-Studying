@@ -7,16 +7,27 @@ import {
     TextInput,
     StyleSheet,
 } from "react-native";
-import { fetchUserTasks, addUserTask, deleteUserTask, editUserTask } from "../UserPages/requests.js";
-import { router,useFocusEffect } from "expo-router";
-import { SwipeListView } from 'react-native-swipe-list-view';
-
+import {
+    fetchUserTasks,
+    addUserTask,
+    deleteUserTask,
+    editUserTask,
+} from "../UserPages/requests.js";
+import { router, useFocusEffect } from "expo-router";
+import { SwipeListView } from "react-native-swipe-list-view";
 
 const gotoTimer = (task) => {
-    router.push({
-        pathname: `../UserPages/timer_page`,
-        params: task,
-    });
+    if (task !== 60) {
+        router.push({
+            pathname: `../UserPages/timer_page`,
+            params: task,
+        });
+    } else {
+        router.push({
+            pathname: `../UserPages/timer_page`,
+            params: { time: task },
+        });
+    }
 };
 
 const TaskModal = ({
@@ -26,7 +37,6 @@ const TaskModal = ({
     setModalVisible,
     uploadTask,
 }) => {
-
     const [task, setTask] = useState({});
     const [nameError, setNameError] = useState("");
     const [timeError, setTimeError] = useState("");
@@ -37,22 +47,19 @@ const TaskModal = ({
         if (selectedTask && Object.keys(selectedTask).length !== 0) {
             setTask({
                 ...selectedTask,
-                time:String(selectedTask.time),
-                points:String(selectedTask.points),
+                time: String(selectedTask.time),
+                points: String(selectedTask.points),
             });
             setButtonText("Update Task");
-            setModalTitle("Edit Task")
+            setModalTitle("Edit Task");
         } else {
             setTask({});
             setButtonText("Add Task");
-            setModalTitle("Add New Task")
+            setModalTitle("Add New Task");
         }
     }, [selectedTask]);
 
-    useEffect(() => {
-
-    }, [])
-
+    useEffect(() => {}, []);
 
     function closeNewTaskModal() {
         setSelectedTask({});
@@ -76,14 +83,15 @@ const TaskModal = ({
         }
     };
 
-
     return (
         <Modal visible={modalVisible} animationType="fade" transparent={true}>
-            <TouchableOpacity style={styles.modalBackground}
+            <TouchableOpacity
+                style={styles.modalBackground}
                 activeOpacity={1}
                 onPress={() => closeNewTaskModal()}
             >
-                <View style={styles.modalContainer}
+                <View
+                    style={styles.modalContainer}
                     onStartShouldSetResponder={() => true}
                 >
                     <Text style={styles.modalHeading}>{modalTitle}</Text>
@@ -156,7 +164,7 @@ const TaskModal = ({
             </TouchableOpacity>
         </Modal>
     );
-}
+};
 
 export default function Home() {
     const [tasks, setTasks] = useState([]);
@@ -167,14 +175,14 @@ export default function Home() {
     useFocusEffect(
         React.useCallback(() => {
             fetchTasks();
-        },[])
-    )
+        }, [])
+    );
 
     async function fetchTasks() {
         try {
             const userTasks = await fetchUserTasks();
             let allTask = userTasks.tasks;
-            setTasks(allTask.filter(task => !task.completed));
+            setTasks(allTask.filter((task) => !task.completed));
         } catch (error) {
             console.error("Error fetching user tasks:", error);
         }
@@ -194,7 +202,7 @@ export default function Home() {
     async function deleteTask(taskId) {
         try {
             const deletedTaskResponse = await deleteUserTask(taskId);
-            if(deletedTaskResponse.ok){
+            if (deletedTaskResponse.ok) {
                 fetchTasks();
             }
         } catch (error) {
@@ -207,7 +215,7 @@ export default function Home() {
             const editTaskResponse = await editUserTask(task);
             fetchTasks();
         } catch (error) {
-            console.error("Edit Task error:",error);
+            console.error("Edit Task error:", error);
         }
     }
 
@@ -216,7 +224,6 @@ export default function Home() {
         setCurrentTaskFunction(() => editTask);
         setModalVisible(true);
     }
-
 
     function clickAddTask() {
         setSelectedTask({});
@@ -274,10 +281,12 @@ export default function Home() {
                 <Text style={styles.addButtonText}>Add Task</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.addButton} onPress={() => gotoTimer(60)}>
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => gotoTimer(60)}
+            >
                 <Text style={styles.addButtonText}>Go Timer</Text>
             </TouchableOpacity>
-
 
             <TaskModal
                 modalVisible={modalVisible}
@@ -286,8 +295,6 @@ export default function Home() {
                 setSelectedTask={setSelectedTask}
                 uploadTask={currentTaskFunction}
             />
-
-
         </View>
     );
 }
@@ -303,41 +310,41 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     taskContainer: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
         padding: 20,
-        borderBottomColor: '#ccc',
+        borderBottomColor: "#ccc",
         borderBottomWidth: 1,
     },
     rowBack: {
-        alignItems: 'center',
-        backgroundColor: '#DDD',
+        alignItems: "center",
+        backgroundColor: "#DDD",
         flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        justifyContent: "space-between",
         paddingLeft: 15,
     },
     backRightBtn: {
-        alignItems: 'center',
+        alignItems: "center",
         bottom: 0,
-        justifyContent: 'center',
-        position: 'absolute',
+        justifyContent: "center",
+        position: "absolute",
         top: 0,
         width: 75,
     },
     backRightBtnLeft: {
-        backgroundColor: 'green',
+        backgroundColor: "green",
         left: 0,
     },
     backRightBtnCenter: {
-        backgroundColor: 'blue',
+        backgroundColor: "blue",
         right: 75,
     },
     backRightBtnRight: {
-        backgroundColor: 'red',
+        backgroundColor: "red",
         right: 0,
     },
     backTextWhite: {
-        color: '#FFF',
+        color: "#FFF",
     },
     addButton: {
         backgroundColor: "blue",

@@ -15,7 +15,6 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { useNavigation } from "expo-router";
 
-const sec_per_min = 60;
 const gotoTimer = (time) => {
     router.push({
         pathname: "/UserPages/timer_page",
@@ -116,7 +115,7 @@ export default function Home() {
                             // TODO: Change the onPress to highlight around button
                             onPress={() => {
                                 setModalVisible(!modalVisible);
-                                gotoTimer(timerText * sec_per_min);
+                                gotoTimer(timerText);
                             }}
                         >
                             <Text style={styles.textStyle}>Start Timer</Text>
@@ -134,7 +133,7 @@ export default function Home() {
                 <TouchableOpacity
                     style={styles.Button}
                     onPress={() => {
-                        gotoTimer(20 * sec_per_min);
+                        gotoTimer(20);
                     }}
                 >
                     <Text style={textStyles.textBody}>
@@ -144,7 +143,7 @@ export default function Home() {
                 <TouchableOpacity
                     style={styles.Button}
                     onPress={() => {
-                        gotoTimer(30 * sec_per_min);
+                        gotoTimer(30);
                     }}
                 >
                     <Text style={textStyles.textBody}>
@@ -154,7 +153,7 @@ export default function Home() {
                 <TouchableOpacity
                     style={styles.Button}
                     onPress={() => {
-                        gotoTimer(45 * sec_per_min);
+                        gotoTimer(45);
                     }}
                 >
                     <Text style={textStyles.textBody}>

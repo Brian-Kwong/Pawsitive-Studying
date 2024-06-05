@@ -5,12 +5,9 @@ import MusicPlayer from "../Player/player.jsx";
 import { styles, textStyles } from "../../../Styles/comp_styles.jsx"; // Import styles from comp-styles.jsx
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { completeUserTask } from "./requests.js";
-import * as SecureStore from "expo-secure-store";
-
-const baseURL = "https://studybuddyserver.azurewebsites.net/";
 
 export default CountdownTimer = () => {
-    const duration = useLocalSearchParams().time;
+    const duration = useLocalSearchParams().time * 60;
     const taskId = useLocalSearchParams()._id;
 
     const navigation = useNavigation();
@@ -55,30 +52,6 @@ export default CountdownTimer = () => {
         }
     }, [remainingTimeSec, isRunning]);
 
-    async function fetchPlaylistData() {
-        const token = await SecureStore.getItemAsync("Token");
-        const user_id = await SecureStore.getItemAsync("user_id");
-        const response = await fetch(`${baseURL}/users/${user_id}/playlists`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        if (response.ok) {
-            const data = await response.json();
-            setPlaylistData(data);
-        } else {
-            alert("Failed to fetch playlist data");
-            return;
-        }
-    }
-
-    // Fetches playlist data
-    useEffect(() => {
-        fetchPlaylistData();
-    });
-
     return (
         <View style={styles.container}>
             <View style={styles.countdownContainer}>
@@ -113,7 +86,7 @@ export default CountdownTimer = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
-            <MusicPlayer playlistData={playlistData} />
+            <MusicPlayer />
         </View>
     );
 };
