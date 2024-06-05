@@ -152,6 +152,7 @@ app.put("/users/:id/email", authenticateUser, addUserEmail);
 app.get("/users/:id/profileImage", authenticateUser, getUserProfileImage);
 app.put("/users/:id/profileImage", authenticateUser, addUserProfileImage);
 
+// Add points
 app.put("/users/:id/addPoints", authenticateUser, addPoints, markTaskAsDone);
 
 // Binds socket to port
