@@ -2,9 +2,9 @@ import * as SecureStore from "expo-secure-store";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/"; // URL for login requests
 
-function addAuthHeader(otherHeaders = {}) {
-    const userToken = SecureStore.getItem("Token");
-    if (userToken != null) {
+async function addAuthHeader(otherHeaders = {}) {
+    const userToken = await SecureStore.getItemAsync("Token");
+    if (userToken) {
         return {
             ...otherHeaders,
             Authorization: `Bearer ${userToken}`,
@@ -17,14 +17,15 @@ function addAuthHeader(otherHeaders = {}) {
 export async function fetchUserTasks() {
     try {
         const user_id = await SecureStore.getItemAsync("user_id");
+        const headers = await addAuthHeader({
+            "Content-Type": "application/json",
+        });
 
         const url = baseURL + "users/" + user_id + "/tasks";
 
         const response = await fetch(url, {
             method: "get",
-            headers: addAuthHeader({
-                "Content-Type": "application/json",
-            }),
+            headers: headers,
         });
 
         if (response.ok) {
@@ -36,7 +37,6 @@ export async function fetchUserTasks() {
             );
         }
     } catch (error) {
-        // 捕获任何可能的错误，并将其抛出
         throw new Error(`Error fetching user tasks: ${error.message}`);
     }
 }
@@ -44,13 +44,15 @@ export async function fetchUserTasks() {
 export async function addUserTask(newTask) {
     try {
         const user_id = await SecureStore.getItemAsync("user_id");
+        const headers = await addAuthHeader({
+            "Content-Type": "application/json",
+        });
+
         const url = baseURL + "users/" + user_id + "/task";
 
         const response = await fetch(url, {
             method: "post",
-            headers: addAuthHeader({
-                "Content-Type": "application/json",
-            }),
+            headers: headers,
             body: JSON.stringify(newTask),
         });
 
@@ -61,20 +63,22 @@ export async function addUserTask(newTask) {
             throw new Error(`Failed to add user task: ${response.statusText}`);
         }
     } catch (error) {
-        // 捕获任何可能的错误，并将其抛出
         throw new Error(`Error adding user task: ${error.message}`);
     }
 }
 
-//new api calls
+// Add the new API calls
+
 export async function searchSongs(query) {
     try {
+        const headers = await addAuthHeader({
+            "Content-Type": "application/json",
+        });
+
         const url = `${baseURL}searchSong?q=${query}`;
         const response = await fetch(url, {
             method: "get",
-            headers: addAuthHeader({
-                "Content-Type": "application/json",
-            }),
+            headers: headers,
         });
 
         if (response.ok) {
@@ -90,12 +94,14 @@ export async function searchSongs(query) {
 
 export async function addSongToPlaylist(playlistId, song) {
     try {
+        const headers = await addAuthHeader({
+            "Content-Type": "application/json",
+        });
+
         const url = `${baseURL}addSongToPlaylist`;
         const response = await fetch(url, {
             method: "post",
-            headers: addAuthHeader({
-                "Content-Type": "application/json",
-            }),
+            headers: headers,
             body: JSON.stringify({ playlistId, song }),
         });
 

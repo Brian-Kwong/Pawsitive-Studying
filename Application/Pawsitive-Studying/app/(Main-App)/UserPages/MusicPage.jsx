@@ -66,6 +66,7 @@ const MusicPage = () => {
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => setSelectedSong(item)}>
                         <View style={styles.songItem}>
+                            <Image source={{ uri: item.artwork }} style={styles.songImage} />
                             <Text style={styles.songTitle}>{item.title}</Text>
                             <Text style={styles.songArtist}>{item.artist}</Text>
                         </View>
@@ -118,9 +119,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     songItem: {
+        flexDirection: 'row',
         padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: 'gray',
+        alignItems: 'center',
+    },
+    songImage: {
+        width: 50,
+        height: 50,
+        marginRight: 10,
     },
     songTitle: {
         fontSize: 18,
