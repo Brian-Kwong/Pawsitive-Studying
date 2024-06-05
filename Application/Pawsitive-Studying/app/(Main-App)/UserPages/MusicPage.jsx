@@ -24,7 +24,7 @@ const MusicPage = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [selectedSong, setSelectedSong] = useState(null);
     const [playlists, setPlaylists] = useState([]);
@@ -43,19 +43,29 @@ const MusicPage = () => {
             try {
                 const token = await SecureStore.getItemAsync("Token");
                 const user_id = await SecureStore.getItemAsync("user_id");
-                const response = await fetch(`${baseURL}/users/${user_id}/playlists`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const response = await fetch(
+                    `${baseURL}/users/${user_id}/playlists`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
                 const data = await response.json();
                 console.log("Fetched Playlists:", data);
                 setPlaylist(data);
-                setPlaylists(data.map(pl => ({ label: pl.name, value: pl._id })));
-                const randomPlaylist = data[Math.floor(Math.random() * data.length)];
-                setSongRecommendation(randomPlaylist.songs[Math.floor(Math.random() * randomPlaylist.songs.length)]);
+                setPlaylists(
+                    data.map((pl) => ({ label: pl.name, value: pl._id }))
+                );
+                const randomPlaylist =
+                    data[Math.floor(Math.random() * data.length)];
+                setSongRecommendation(
+                    randomPlaylist.songs[
+                        Math.floor(Math.random() * randomPlaylist.songs.length)
+                    ]
+                );
             } catch (error) {
                 console.error("Error fetching playlist:", error);
             }
@@ -68,9 +78,9 @@ const MusicPage = () => {
             return;
         }
         try {
-            console.log('Searching for:', searchTerm);
+            console.log("Searching for:", searchTerm);
             const results = await searchSongs(searchTerm);
-            console.log('Search results:', results);
+            console.log("Search results:", results);
             setSearchResults(results);
         } catch (error) {
             console.error("Error searching songs:", error);
@@ -81,11 +91,18 @@ const MusicPage = () => {
         if (!selectedSong || !selectedPlaylist) return;
 
         try {
-            console.log('Adding song to playlist:', selectedSong, selectedPlaylist);
-            const response = await addSongToPlaylist(selectedPlaylist, selectedSong);
+            console.log(
+                "Adding song to playlist:",
+                selectedSong,
+                selectedPlaylist
+            );
+            const response = await addSongToPlaylist(
+                selectedPlaylist,
+                selectedSong
+            );
             if (response) {
-                console.log('Song added successfully:', response);
-                alert('Song added successfully');
+                console.log("Song added successfully:", response);
+                alert("Song added successfully");
                 setSelectedSong(null);
                 setSelectedPlaylist(null);
                 setModalVisible(false);
@@ -110,20 +127,37 @@ const MusicPage = () => {
             {songRecommendation && (
                 <View style={styles.recommendationContainer}>
                     <Image
-                        source={{ uri: songRecommendation.albumArt || "https://images.unsplash.com/3/www.madebyvadim.com.jpg?q=80&w=2964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }}
+                        source={{
+                            uri:
+                                songRecommendation.albumArt ||
+                                "https://images.unsplash.com/3/www.madebyvadim.com.jpg?q=80&w=2964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        }}
                         style={styles.albumArt}
                     />
-                    <Text style={styles.songTitle}>{songRecommendation.title}</Text>
-                    <Text style={styles.songArtist}>{songRecommendation.artist}</Text>
+                    <Text style={styles.songTitle}>
+                        {songRecommendation.title}
+                    </Text>
+                    <Text style={styles.songArtist}>
+                        {songRecommendation.artist}
+                    </Text>
                 </View>
             )}
             <FlatList
                 data={searchResults}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => { setSelectedSong(item); setModalVisible(true); }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setSelectedSong(item);
+                            setModalVisible(true);
+                        }}
+                    >
                         <View style={styles.songItem}>
-                            <Text style={styles.songTitle}>{item.title}</Text>
+                            <Text style={styles.songTitle}>
+                                {item.songName.length > 40
+                                    ? item.songName.substring(0, 40) + "..."
+                                    : item.songName}
+                            </Text>
                             <Text style={styles.songArtist}>{item.artist}</Text>
                         </View>
                     </TouchableOpacity>
@@ -148,7 +182,10 @@ const MusicPage = () => {
                         dropDownContainerStyle={styles.dropdownList}
                     />
                     <Button title="Add to Playlist" onPress={handleAddSong} />
-                    <Button title="Cancel" onPress={() => setModalVisible(false)} />
+                    <Button
+                        title="Cancel"
+                        onPress={() => setModalVisible(false)}
+                    />
                 </View>
             </Modal>
         </View>
@@ -221,14 +258,14 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: "blue",
         padding: 10,
-        alignItems: 'center',
+        alignItems: "center",
         marginBottom: 10,
     },
     buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: "white",
+        fontWeight: "bold",
     },
 });
 
