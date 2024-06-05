@@ -113,16 +113,16 @@ app.get("/user/:id", (req, res) => {
 // Object.save to update
 
 // Name
-app.get("/users/:id", authenticateUser, getUserName);
+app.get("/users/:id/name", authenticateUser, getUserName);
 app.post("/users/:id/name", authenticateUser, addUserName);
 // Username
-app.get("/users/:id", authenticateUser, getUserUsername);
+app.get("/users/:id/username", authenticateUser, getUserUsername);
 app.post("/users/:id/username", authenticateUser, addUserUsername);
 // Email
-app.get("/users/:id", authenticateUser, getUserEmail);
+app.get("/users/:id/email", authenticateUser, getUserEmail);
 app.post("/users/:id/email", authenticateUser, addUserEmail);
 // Profile Picture
-app.get("/users/:id", authenticateUser, getUserProfileImage);
+app.get("/users/:id/profileImage", authenticateUser, getUserProfileImage);
 app.post("/users/:id/profileImage", authenticateUser, addUserProfileImage);
 
 app.listen(port, () => {
