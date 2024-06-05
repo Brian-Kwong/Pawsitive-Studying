@@ -1,14 +1,111 @@
-import { TouchableOpacity, Text, View, ScrollView } from "react-native";
+import {
+    TouchableOpacity,
+    TouchableNativeFeedback,
+    Text,
+    View,
+    ScrollView,
+} from "react-native";
 import { styles } from "../../../Styles/comp_styles.jsx";
 import { StatusBar } from "expo-status-bar";
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { default_image } from "../UserPages/default_image.js";
+import { useEffect, useState } from "react";
 
+const baseURL = "https://studybuddyserver.azurewebsites.net/";
 const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
-export default function Settings() {
+export default function Users() {
+    const [profilePictureImage, setProfilePictureImage] =
+        useState(default_image);
+
+    async function getProfilePicture() {
+        try {
+            const token = await SecureStore.getItemAsync("Token");
+            const userID = await getID();
+            let response = await fetch(
+                `${baseURL}/users/${userID}/profilePicture`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (response.ok) {
+                let data = await response.json();
+                if (data != null) {
+                    setProfilePictureImage(data.image);
+                } else {
+                    alert("Failed to fetch user data");
+                    return;
+                }
+                return;
+            } else {
+                alert("Error fetching user data");
+                return;
+            }
+        } catch (error) {
+            alert("Error fetching user data");
+            return;
+        }
+    }
+
+    async function updateProfilePicture() {
+        let image = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Image,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.2,
+            base64: true,
+        });
+        if (!image.cancelled) {
+            image = image.assets[0].base64
+                ? image.assets[0].base64
+                : default_image;
+            setProfilePictureImage(image);
+        }
+        // try {
+        //     const token = await SecureStore.getItemAsync("Token");
+        //     const userID = await getID();
+        //     let response = await fetch(
+        //         `${baseURL}/users/${userID}/profilePicture`,
+        //         {
+        //             method: "PUT",
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 Authorization: `Bearer ${token}`,
+        //             },
+        //             body: JSON.stringify({
+        //                 image: username,
+        //             }),
+        //         }
+        //     );
+        //     if (response.ok) {
+        //         alert("Username updated successfully");
+        //         setUser({
+        //             name: user.name,
+        //             username: username,
+        //             email: user.email,
+        //         });
+        //         return;
+        //     } else if (response.status === 404) {
+        //         alert("Username already exists");
+        //         return;
+        //     } else {
+        //         alert("Error updating username");
+        //         return;
+        //     }
+        // } catch (error) {
+        //     alert("Error updating username");
+        //     return;
+        // }
+    }
+
     return (
         <ScrollView>
             <View style={styles.topContainer}>
@@ -20,17 +117,23 @@ export default function Settings() {
                         marginTop: 20,
                     }}
                 >
-                    <Image
-                        style={{
-                            resizeMode: "stretch",
-                            height: "100%",
-                            width: "100%",
-                            borderRadius: 360,
-                        }}
-                        placeholder={{ blurhash }}
-                        source="https://images.unsplash.com/photo-1615497001839-b0a0eac3274c?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        contentFit="cover"
-                    />
+                    <TouchableNativeFeedback
+                        onPress={() => updateProfilePicture()}
+                    >
+                        <Image
+                            style={{
+                                resizeMode: "stretch",
+                                height: "100%",
+                                width: "100%",
+                                borderRadius: 360,
+                            }}
+                            placeholder={{ blurhash }}
+                            source={{
+                                uri: `data:image/jpeg;base64, ${profilePictureImage}`,
+                            }}
+                            contentFit="cover"
+                        />
+                    </TouchableNativeFeedback>
                 </View>
                 <Text style={styles.textHeader}>User Profile</Text>
                 <View>
@@ -98,7 +201,7 @@ export default function Settings() {
                         onPress={() => {
                             // Do something
                             router.push({
-                                pathname: "../UserPages/settings",
+                                pathname: "../UserPages/editSettings",
                                 title: "Settings",
                             });
                         }}
