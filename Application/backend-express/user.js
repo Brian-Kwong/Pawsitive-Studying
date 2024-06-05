@@ -120,7 +120,7 @@ export async function addUserName(req, res) {
             return res.status(404).send("name already exists");
         }
         // else push the new name
-        user.name.push(name);
+        user.name = name;
         await user.save()
         res.status(201).json(name);
     } catch (error) {
@@ -135,7 +135,7 @@ export async function addUserUsername(req, res) {
             return res.status(404).send("username already exists");
         }
         // else push the new name
-        user.username.push(username);
+        user.username = username;
         await user.save()
         res.status(201).json(username);
     } catch (error) {
@@ -150,9 +150,39 @@ export async function addUserEmail(req, res) {
             return res.status(404).send("email already exists");
         }
         // else push the new name
-        user.email.push(email);
+        user.email = email;
         await user.save()
         res.status(201).json(email);
+    } catch (error) {
+        res.status(500).send("Server error");
+    }
+}
+export async function getUserProfileImage(req, res) {
+    const profileImage = req.params.profileImage;
+    try {
+        const user = await User.findByProfileImage(profileImage);
+        if (user) {
+            return res.status(404).send("image already exists");
+        }
+        // else push the new name
+        user.profileImage.push(profileImage);
+        await user.save()
+        res.status(201).json(profileImage);
+    } catch (error) {
+        res.status(500).send("Server error");
+    }
+}
+export async function addUserProfileImage(req, res) {
+    const profileImage = req.params.profileImage;
+    try {
+        const user = await User.findByProfileImage(profileImage);
+        if (user) {
+            return res.status(404).send("image already exists");
+        }
+        // else push the new name
+        user.profileImage = profileImage;
+        await user.save()
+        res.status(201).json(profileImage);
     } catch (error) {
         res.status(500).send("Server error");
     }

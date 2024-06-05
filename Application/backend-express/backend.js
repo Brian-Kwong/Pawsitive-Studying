@@ -113,13 +113,13 @@ app.get("/user/:id", (req, res) => {
 // Object.save to update
 
 // Name
-app.get("/users/:name", authenticateUser, getUserName);
+app.get("/users/:id", authenticateUser, getUserName);
 app.post("/users/:name", authenticateUser, addUserName);
 // Username
-app.get("/users/:username", authenticateUser, getUserUsername);
+app.get("/users/:id", authenticateUser, getUserUsername);
 app.post("/users/:username", authenticateUser, addUserUsername);
 // Email
-app.get("/users/:email", authenticateUser, getUserEmail);
+app.get("/users/:id", authenticateUser, getUserEmail);
 app.post("/users/:email", authenticateUser, addUserEmail);
 
 app.listen(port, () => {

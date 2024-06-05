@@ -33,7 +33,8 @@ export default function editSettings() {
             <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            // Do something
+                            // On press should pop up textbox to type in
+                            // then should push to backend
                         }}
                     >
                         <Text style={styles.textBody}>
@@ -44,7 +45,8 @@ export default function editSettings() {
             <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            // Do something
+                            // On press should pop up textbox to type in
+                            // then should push to backend
                         }}
                     >
                         <Text style={styles.textBody}>Change Username</Text>
@@ -53,7 +55,8 @@ export default function editSettings() {
             <TouchableOpacity
                         style={styles.LongButton}
                         onPress={() => {
-                            // Do something
+                            // On press should pop up textbox to type in
+                            // then should push to backend
                         }}
                     >
                         <Text style={styles.textBody}>Change Email</Text>
