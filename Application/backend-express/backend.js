@@ -17,6 +17,7 @@ import {
     addUserName,
     getUserProfileImage,
     addUserProfileImage,
+    addPoints,
 } from "./user.js";
 import { getCharacters, addCharToUser } from "./chracters.js";
 import {
@@ -150,6 +151,8 @@ app.put("/users/:id/email", authenticateUser, addUserEmail);
 // Profile Picture
 app.get("/users/:id/profileImage", authenticateUser, getUserProfileImage);
 app.put("/users/:id/profileImage", authenticateUser, addUserProfileImage);
+
+app.put("/users/:id/addPoints", authenticateUser, addPoints, markTaskAsDone);
 
 // Binds socket to port
 const server = async () =>

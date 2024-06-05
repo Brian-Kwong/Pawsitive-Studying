@@ -266,6 +266,41 @@ export async function addUserEmail(req, res) {
     }
 }
 
+export async function addPoints(res, req, next) {
+    const userId = req.params.id;
+    const task = req.body.task;
+    const time = req.body.time;
+    try {
+        const user = await User.findById(userId);
+        if (user === null || user === undefined) {
+            res.status(404).send("User not found");
+            return;
+        } else {
+            if (task === null || task === undefined) {
+                let completed_task = user.tasks.filter(
+                    () => task._id.toString() === task
+                );
+                if (completed_task.length === 0) {
+                    res.status(404).send("Task not found");
+                    return;
+                } else {
+                    user.points += task[0].points;
+                    await user.save();
+                    req.params.taskId = task._id;
+                    next();
+                }
+            } else {
+                user.points += time * 10;
+                const updatedUser = await user.save();
+                res.status(201).json(updatedUser);
+            }
+        }
+    } catch (error) {
+        console.error("Error adding points:", error);
+        res.status(500).send("Internal Server Error Updating points");
+    }
+}
+
 export async function getUserProfileImage(req, res) {
     const id = req.params.id;
     try {
