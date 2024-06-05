@@ -77,7 +77,7 @@ export async function editUserTask(editTask) {
             headers: addAuthHeader({
                 "Content-Type": "application/json",
             }),
-            body: JSON.stringify(editTask),
+            body: JSON.stringify(),
         });
 
         if (response.ok) {

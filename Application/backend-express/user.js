@@ -135,7 +135,7 @@ export async function getCompletedTasks(req, res) {
 export async function editTasksDetails(req, res) {
     try {
         const userId = req.params.id;
-        let { id, name, course, description, time, points, completed } =
+        let { _id, name, course, description, time, points, completed } =
             req.body;
         let user = await User.findById(userId);
         if (user === null || user === undefined) {
@@ -143,7 +143,7 @@ export async function editTasksDetails(req, res) {
             return;
         } else {
             user.tasks.forEach((task) => {
-                if (task._id.toString() === id.toString()) {
+                if (task._id.toString() === _id.toString()) {
                     task.name = name === undefined ? task.name : name;
                     task.course = course === undefined ? task.course : course;
                     task.description =

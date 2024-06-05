@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Modal } from "react-native";
 import { CircularProgress } from "react-native-circular-progress";
 import MusicPlayer from "../Player/player.jsx";
 import { styles, textStyles } from "../../../Styles/comp_styles.jsx"; // Import styles from comp-styles.jsx
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { completeUserTask } from "./requests.js";
+import * as SecureStore from "expo-secure-store";
+
+const baseURL = "https://studybuddyserver.azurewebsites.net/";
 
 export default CountdownTimer = () => {
     const duration = useLocalSearchParams().time;
@@ -24,6 +27,8 @@ export default CountdownTimer = () => {
     const [remainingTimeSec, setRemaningTimeSec] = useState(duration);
     const [progress, setProgress] = useState(100);
     const [isRunning, setIsRunning] = useState(false);
+
+    const [playlistData, setPlaylistData] = useState([]); // State for playlist data
 
     async function completeTask() {
         try {
@@ -49,6 +54,30 @@ export default CountdownTimer = () => {
             return () => clearInterval(timer);
         }
     }, [remainingTimeSec, isRunning]);
+
+    async function fetchPlaylistData() {
+        const token = await SecureStore.getItemAsync("Token");
+        const user_id = await SecureStore.getItemAsync("user_id");
+        const response = await fetch(`${baseURL}/users/${user_id}/playlists`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.ok) {
+            const data = await response.json();
+            setPlaylistData(data);
+        } else {
+            alert("Failed to fetch playlist data");
+            return;
+        }
+    }
+
+    // Fetches playlist data
+    useEffect(() => {
+        fetchPlaylistData();
+    });
 
     return (
         <View style={styles.container}>
@@ -84,7 +113,7 @@ export default CountdownTimer = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
-            <MusicPlayer />
+            <MusicPlayer playlistData={playlistData} />
         </View>
     );
 };
