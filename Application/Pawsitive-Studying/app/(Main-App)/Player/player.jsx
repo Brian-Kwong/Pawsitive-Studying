@@ -18,7 +18,7 @@ import TrackPlayer, {
 } from "react-native-track-player";
 
 import * as SecureStore from "expo-secure-store";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { useTrackPlayerEvents, Event } from "react-native-track-player";
 
 const baseURL = "https://studybuddyserver.azurewebsites.net/";
 
@@ -67,12 +67,13 @@ async function newPlaylist(playlistID, playlists) {
     await TrackPlayer.add(tracks);
 }
 
-async function setupTrack(playlist, playlistName, songURLs) {
+async function setupTrack(playlist, playlistName, songURLs, setupCurrent) {
     let tracks = playlist.map((pl) => {
         return {
             url: songURLs[playlist.indexOf(pl)],
             title: pl.songName,
             album: playlistName,
+            artist: pl.artist,
             artwork: pl.artistCoverURL,
             headers: {
                 Authorization: `OAuth 2-295991-308098488-GhuX8stsw0qvqi`,
@@ -82,6 +83,13 @@ async function setupTrack(playlist, playlistName, songURLs) {
 
     await TrackPlayer.add(tracks);
 
+    if (tracks.length <= 0) return;
+    setupCurrent({
+        title: tracks[0].title,
+        artist: tracks[0].artist,
+        album: tracks[0].album,
+        artwork: tracks[0].artwork,
+    });
     // 设置播放器选项
     TrackPlayer.updateOptions({
         stopWithApp: true,
@@ -101,6 +109,13 @@ const MusicPlayer = () => {
     const [playlist, setPlaylist] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+    const [currentSong, setCurrentSong] = useState({
+        title: "",
+        artist: "",
+        album: "",
+        artwork: "",
+    });
+    const events = [Event.PlaybackActiveTrackChanged];
 
     async function fetchPlaylistData() {
         const token = await SecureStore.getItemAsync("Token");
@@ -127,6 +142,18 @@ const MusicPlayer = () => {
         }
     }
 
+    useTrackPlayerEvents(events, (event) => {
+        if (event.type === Event.PlaybackActiveTrackChanged) {
+            if (event.track === undefined) return;
+            setCurrentSong({
+                title: event.track.title,
+                artist: event.track.artist,
+                album: event.track.album,
+                artwork: event.track.artwork,
+            });
+        }
+    });
+
     useEffect(() => {
         fetchPlaylistData().then((playlistFull) => {
             if (playlistFull.length > 0) {
@@ -138,12 +165,14 @@ const MusicPlayer = () => {
                     setupTrack(
                         randomPlaylist.songs,
                         randomPlaylist.name,
-                        songURLs
-                    );
-                    return async () => {
-                        await TrackPlayer.stop(); // 停止播放器
-                        await TrackPlayer.removeUpcomingTracks(); // 移除所有队列中的曲目
-                    };
+                        songURLs,
+                        setCurrentSong
+                    ).then(() => {
+                        return async () => {
+                            await TrackPlayer.stop(); // 停止播放器
+                            await TrackPlayer.removeUpcomingTracks(); // 移除所有队列中的曲目
+                        };
+                    });
                 });
             }
         });
@@ -168,13 +197,25 @@ const MusicPlayer = () => {
         <View style={styles.container}>
             <Image
                 source={{
-                    uri: "https://cdn.pixabay.com/audio/2024/01/15/16-58-27-753_200x200.jpg",
+                    uri:
+                        currentSong.artwork === ""
+                            ? "https://cdn.pixabay.com/audio/2024/01/15/16-58-27-753_200x200.jpg"
+                            : `${currentSong.artwork}`,
                 }}
                 style={styles.albumCover}
             />
             <View style={styles.infoAndControls}>
-                <Text style={styles.songTitle}>Coverless book ( Lofi )</Text>
-                <Text style={styles.albumInfo}>AmbientAUDIOVISION</Text>
+                <Text style={styles.songTitle}>
+                    {currentSong.title === undefined || currentSong.title === ""
+                        ? "Unknown"
+                        : currentSong.title}
+                </Text>
+                <Text style={styles.albumInfo}>
+                    {currentSong.artist === undefined ||
+                    currentSong.artist === ""
+                        ? "Unknown"
+                        : currentSong.artist}
+                </Text>
                 <Slider
                     style={styles.trackProgress}
                     value={progress.position}
