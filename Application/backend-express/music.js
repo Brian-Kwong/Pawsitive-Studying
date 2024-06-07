@@ -130,7 +130,7 @@ export async function addSong(req, res) {
         }
 
         if (
-            song.name === null ||
+            song.songName === null ||
             song.length === null ||
             song.artist === null ||
             song.songURL === null ||
@@ -141,7 +141,7 @@ export async function addSong(req, res) {
         }
 
         const newSong = {
-            songName: song.name,
+            songName: song.songName,
             length: song.length,
             artist: song.artist,
             artistCoverURL: song.artistCoverURL,
