@@ -85,7 +85,9 @@ export default function CharacterTable(characterList) {
                                         // Purchase character
                                     }}
                                 >
-                                    <Text>Purchase</Text>
+                                    <Text>
+                                        Purchase ({character.pointsRequired})
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
                         );
