@@ -24,10 +24,10 @@ import {
     registerUser,
     loginUser,
     authenticateUser,
-    getUserByUsernameOrEmail,
-    getUserById,
     sendResetPasswordEmail,
     resetPassword,
+    findUser,
+    findUserByIds,
 } from "./auth.js";
 import serverless from "serverless-http";
 import {
@@ -82,35 +82,9 @@ app.post("/signup", registerUser);
 app.get("/users/:id/tasks", authenticateUser, getUserTasks);
 app.post("/users/:id/task", authenticateUser, addUserTask);
 
-app.get("/user", (req, res) => {
-    const { username, email } = req.query;
-    getUserByUsernameOrEmail(username, email)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).json({ error: "User not found" });
-            }
-            res.json(user);
-        })
-        .catch((error) => {
-            console.error("Error fetching user:", error);
-            res.status(500).json({ error: "Internal server error" });
-        });
-});
+app.get("/user", authenticateUser, findUser);
 
-app.get("/user/:id", (req, res) => {
-    const { id } = req.params;
-    getUserById(id)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).json({ error: "User not found" });
-            }
-            res.json(user);
-        })
-        .catch((error) => {
-            console.error("Error fetching user:", error);
-            res.status(500).json({ error: "Internal server error" });
-        });
-});
+app.get("/user/:id", authenticateUser, findUserByIds);
 
 app.get("/users/:id/playlists", authenticateUser, getPlaylist);
 app.post("/users/:id/playlist", authenticateUser, addPlaylist);

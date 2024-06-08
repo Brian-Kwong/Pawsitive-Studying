@@ -249,3 +249,33 @@ export async function resetPassword(req, res) {
         console.error("Error resetting password:", error);
     }
 }
+
+export async function findUser(req, res) {
+    const { username, email } = req.query;
+    getUserByUsernameOrEmail(username, email)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+            res.json(user);
+        })
+        .catch((error) => {
+            console.error("Error fetching user:", error);
+            res.status(500).json({ error: "Internal server error" });
+        });
+}
+
+export async function findUserByIds(req, res) {
+    const { id } = req.params;
+    getUserById(id)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+            res.json(user);
+        })
+        .catch((error) => {
+            console.error("Error fetching user:", error);
+            res.status(500).json({ error: "Internal server error" });
+        });
+}
