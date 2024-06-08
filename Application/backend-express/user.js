@@ -276,7 +276,7 @@ export async function addPoints(req, res, next) {
             res.status(404).send("User not found");
             return;
         } else {
-            if (task === null || task === undefined) {
+            if (task !== null && task !== undefined && task !== "None") {
                 let completed_task = user.tasks.filter(
                     () => task._id.toString() === task
                 );
