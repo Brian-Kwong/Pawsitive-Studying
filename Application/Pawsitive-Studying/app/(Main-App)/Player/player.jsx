@@ -55,6 +55,7 @@ async function newPlaylist(playlistID, playlists) {
             url: songURLs[playlistSongs.indexOf(pl)],
             title: pl.songName,
             album: playlistName,
+            artist: pl.artist,
             artwork: pl.artistCoverURL,
             headers: {
                 Authorization: `OAuth ${process.env.EXPO_PUBLIC_SOUND_CLOUD_API}`,
@@ -64,6 +65,7 @@ async function newPlaylist(playlistID, playlists) {
 
     await TrackPlayer.stop(); // 停止播放器
     await TrackPlayer.removeUpcomingTracks(); // 移除所有队列中的曲目
+    await TrackPlayer.reset(); // 重置播放器
     await TrackPlayer.add(tracks);
 }
 
@@ -84,6 +86,7 @@ async function setupTrack(playlist, playlistName, songURLs, setupCurrent) {
     await TrackPlayer.add(tracks);
 
     if (tracks.length <= 0) return;
+    console.log(tracks);
     setupCurrent({
         title: tracks[0].title,
         artist: tracks[0].artist,
@@ -229,7 +232,7 @@ const MusicPlayer = () => {
                 <View style={styles.controls}>
                     <TouchableOpacity
                         onPress={() => {
-                            console.log("Open play-list");
+                            setModalVisible(true);
                         }}
                     >
                         <MaterialIcons
@@ -290,9 +293,13 @@ const MusicPlayer = () => {
                         title="Select Playlist"
                         onPress={() => {
                             if (selectedPlaylist !== null) {
-                                newPlaylist(selectedPlaylist, playlistFull);
+                                newPlaylist(
+                                    selectedPlaylist,
+                                    playlistFull
+                                ).then(() => {
+                                    setModalVisible(false);
+                                });
                             }
-                            setModalVisible(false);
                         }}
                     />
                     <Button
