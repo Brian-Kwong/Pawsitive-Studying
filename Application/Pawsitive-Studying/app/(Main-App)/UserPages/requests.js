@@ -167,6 +167,7 @@ export async function searchSongs(query) {
 
 export async function addSongToPlaylist(playlistId, song) {
     try {
+        console.log(playlistId, song);
         const headers = await addAuthHeader({
             "Content-Type": "application/json",
         });

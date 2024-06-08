@@ -63,11 +63,7 @@ function login(username, password) {
 
 function savePassword(password) {
     return new Promise((resolve, reject) => {
-        if (
-            SecureStore.canUseBiometricAuthentication() &&
-            LocalAuthentication.hasHardwareAsync() &&
-            LocalAuthentication.supportedAuthenticationTypesAsync().length > 0
-        ) {
+        if (SecureStore.canUseBiometricAuthentication()) {
             SecureStore.setItemAsync("Password", password, {
                 requireAuthentication: true,
                 authenticationPrompt:

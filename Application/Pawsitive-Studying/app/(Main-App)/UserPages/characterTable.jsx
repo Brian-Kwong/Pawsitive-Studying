@@ -16,7 +16,7 @@ const tableStyles = StyleSheet.create({
     },
     imageProp: {
         width: "90%",
-        aspectRatio: 1 / 1,
+        aspectRatio: 1 / 1.2,
     },
 });
 

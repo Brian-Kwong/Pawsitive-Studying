@@ -4,7 +4,7 @@
         "slug": "Pawsitive-Studying",
         "scheme": "pawsitive-studying",
         "owner": "pawsitive-studying",
-        "version": "1.0.0",
+        "version": "1.0.2",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
@@ -14,9 +14,7 @@
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
-        "assetBundlePatterns": [
-            "**/*"
-        ],
+        "assetBundlePatterns": ["**/*"],
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.tigerplayspc.PawsitiveStudying",
@@ -24,9 +22,7 @@
                 "usesNonExemptEncryption": false
             },
             "infoPlist": {
-                "UIBackgroundModes": [
-                    "audio"
-                ]
+                "UIBackgroundModes": ["audio"]
             }
         },
         "android": {
