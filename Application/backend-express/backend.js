@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import {
     getUserTasks,
@@ -29,7 +28,6 @@ import {
     sendResetPasswordEmail,
     resetPassword,
 } from "./auth.js";
-import serverless from "serverless-http";
 import {
     addPlaylist,
     getPlaylist,
@@ -39,37 +37,56 @@ import {
     findSong,
     getPlaylistStreamURL,
 } from "./music.js";
-dotenv.config();
+
+import { MongoMemoryServer } from "mongodb-memory-server";
+import mongoose from "mongoose";
+
+let memServer;
+
+export function initDatabase() {
+    return new Promise((resolve, reject) => {
+        MongoMemoryServer.create()
+            .then((mongo) => {
+                const mongoURI = mongo.getUri();
+                mongoose
+                    .connect(mongoURI)
+                    .then(() => {
+                        memServer = mongo;
+                        //console.log("Connected to MongoDB");
+                        resolve();
+                    })
+                    .catch((error) => {
+                        console.error("Error connecting to MongoDB:", error);
+                        reject(error);
+                    });
+            })
+            .catch((error) => {
+                console.error("Error starting database:", error);
+                reject(error);
+            });
+    });
+}
+
+export function closeDatabase() {
+    return new Promise((resolve, reject) => {
+        memServer
+            .stop()
+            .then(() => {
+                mongoose.connection.close().then(() => {
+                    //console.log("Disconnected from MongoDB");
+                    resolve();
+                });
+            })
+            .catch((error) => {
+                console.error("Error stopping database:", error);
+                reject(error);
+            });
+    });
+}
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
-
-const port = process.env.PORT || 3000;
-
-const mongoUser = process.env.MONGO_USER;
-const mongoPwd = process.env.MONGO_PWD;
-const mongoCluster = process.env.MONGO_CLUSTER;
-
-let mongoURI;
-
-// Swapped to cloud database for testing
-// Allows universal access to database and shared dataa
-// Integrate with Vercel
-if (mongoUser && mongoPwd) {
-    mongoURI = `mongodb+srv://${mongoUser}:${mongoPwd}@${mongoCluster}.yzdyxed.mongodb.net/StudyBuddy?retryWrites=true&w=majority&appName=StudyBuddy/`;
-} else {
-    throw new Error("MongoDB username or password not found");
-}
-
-mongoose
-    .connect(mongoURI)
-    .then(() => {
-        console.log("Connected to MongoDB");
-    })
-    .catch((error) => {
-        console.error("Error connecting to MongoDB:", error);
-    });
 
 /* GET <server>/login/user?username=
                     <username>password=<password>
@@ -161,18 +178,4 @@ app.put("/users/:id/profileImage", authenticateUser, addUserProfileImage);
 // Add points
 app.put("/users/:id/addPoints", authenticateUser, addPoints, markTaskAsDone);
 
-// Binds socket to port
-const server = async () =>
-    app.listen(port, () => {
-        console.log(`REST API  is listening at ${port}`);
-    });
-
-// Starts server
-server();
-
-// Lambda handler
-const handler = serverless(app);
-export async function handleStart(context, req) {
-    const res = await handler(context, req);
-    return res;
-}
+export default app;
