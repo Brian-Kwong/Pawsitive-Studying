@@ -8,7 +8,6 @@ beforeAll(() => {
 });
 afterAll(() => {
     return closeDatabase();
-    done();
 });
 
 let token = "Bearer ";
