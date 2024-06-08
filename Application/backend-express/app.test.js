@@ -12,6 +12,8 @@ afterAll(() => {
 
 let token = "Bearer ";
 let id;
+let playlistId;
+let songId;
 
 // test signup
 describe("POST /signup", () => {
@@ -69,6 +71,11 @@ describe("GET ALL users", () => {
             .get("/user")
             .set("Authorization", token);
         expect(response.status).toBe(200);
+    });
+    // trying request without token
+    test("it responds with a 401 status code", async () => {
+        const response = await supertest(app).get("/user");
+        expect(response.status).toBe(401);
     });
 });
 
@@ -136,7 +143,7 @@ describe("GET /users/:id/tasks", () => {
 });
 
 // search for a song
-describe("GET /searchSong", () => {
+describe("GET search for a a song", () => {
     test("it responds with a 200 status code", async () => {
         const response = await supertest(app)
             .get("/searchSong")
@@ -162,6 +169,7 @@ describe("POST /users/:id/playlist", () => {
         expect(response.body.description).toBe("test description");
         expect(response.body.songs.length).toBe(0);
         expect(response.body.creator).toBe(id);
+        expect(response.body.numberOfSongs).toBe(0);
     });
 });
 
@@ -173,9 +181,111 @@ describe("GET /users/:id/playlists", () => {
             .set("Authorization", token);
         expect(response.status).toBe(200);
         expect(response.body.length).toBe(1);
+        playlistId = response.body[0]._id;
         expect(response.body[0].name).toBe("test playlist");
         expect(response.body[0].description).toBe("test description");
         expect(response.body[0].songs.length).toBe(0);
         expect(response.body[0].creator).toBe(id);
+    });
+});
+
+// add a song to a playlist for a user
+// first find it on soundcloud then add to playlist
+// /users/:id/:playlistId/song
+describe("ADD song to playlist for user", () => {
+    test("it responds with a 201 status code", async () => {
+        const response = await supertest(app)
+            .post(`/users/${id}/${playlistId}/song`)
+            .send({
+                songName: "Sub Urban - Cradles [NCS Release]",
+                length: 209,
+                artist: "Sub Urban",
+                artistCoverURL:
+                    "https://i1.sndcdn.com/artworks-000634506352-b3zsid-large.jpg",
+                songURL:
+                    "https://api-v2.soundcloud.com/media/soundcloud:tracks:554484609/631eaf2f-cb7f-4e57-84ba-59c645b31302/stream/hls",
+                soundCloudURL:
+                    "https://soundcloud.com/nocopyrightsounds/sub-urban-cradles-ncs-release",
+            })
+            .set("Authorization", token);
+        expect(response.status).toBe(201);
+        expect(response.body.songs.length).toBe(1);
+        expect(response.body.numberOfSongs).toBe(1);
+        expect(response.body.songs[0].songName).toBe(
+            "Sub Urban - Cradles [NCS Release]"
+        );
+        expect(response.body.songs[0].length).toBe(209);
+        expect(response.body.songs[0].artist).toBe("Sub Urban");
+        expect(response.body.songs[0].artistCoverURL).toBe(
+            "https://i1.sndcdn.com/artworks-000634506352-b3zsid-large.jpg"
+        );
+        expect(response.body.songs[0].songURL).toBe(
+            "https://api-v2.soundcloud.com/media/soundcloud:tracks:554484609/631eaf2f-cb7f-4e57-84ba-59c645b31302/stream/hls"
+        );
+        songId = response.body.songs[0]._id;
+    });
+});
+
+// get stream URL
+describe("GET stream URL", () => {
+    test("it responds with a 200 status code", async () => {
+        const response = await supertest(app)
+            .get(`/songs/stream/${songId}`)
+            .set("Authorization", token);
+        expect(response.status).toBe(200);
+    });
+});
+
+// get name of user
+describe("GET name by id", () => {
+    test("it responds with a 200 status code", async () => {
+        const response = await supertest(app)
+            .get(`/users/${id}/name`)
+            .set("Authorization", token);
+        expect(response.status).toBe(200);
+        expect(response.body.name).toBe("test");
+    });
+});
+
+// set name of user
+describe("PUT name by id", () => {
+    test("it responds with a 200 status code", async () => {
+        const response = await supertest(app)
+            .put(`/users/${id}/name`)
+            .send({ name: "kitty" })
+            .set("Authorization", token);
+        expect(response.status).toBe(201);
+    });
+});
+
+// get email
+describe("GET email", () => {
+    test("it responds with a 200 status code", async () => {
+        const response = await supertest(app)
+            .get(`/users/${id}/email`)
+            .set("Authorization", token);
+        expect(response.status).toBe(200);
+        expect(response.body.email).toBe("test@gmail.com");
+    });
+});
+
+// set a new email
+describe("PUT new email", () => {
+    test("it responds with a 201 status code", async () => {
+        const response = await supertest(app)
+            .put(`/users/${id}/email`)
+            .send({ email: "hello_world@gmail.com" })
+            .set("Authorization", token);
+        expect(response.status).toBe(201);
+    });
+});
+
+// get profile image
+describe("get PFP", () => {
+    test("it responds with a 200 status code", async () => {
+        const response = await supertest(app)
+            .get(`/users/${id}/profileImage`)
+            .set("Authorization", token);
+        expect(response.status).toBe(200);
     });
 });
